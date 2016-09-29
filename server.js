@@ -61,7 +61,13 @@ app.post('/receiveSMS', function(req, res) {
 
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
-    twiml.message('Thanks for the text');
+    if (req.query.Body == 'Test' || req.query.Body == 'test'){
+        twiml.message('Oh, are you testing?');
+    } else if(req.query.Body == 'bye') {
+        twiml.message('Goodbye');
+    } else {
+        twiml.message('Thanks for the text. I haven\'t set up any functionality for that input yet. PS: Try \'test\'.');
+    }
 
     res.writeHead(200, {
         'Content-Type': 'text/xml'
@@ -75,7 +81,7 @@ app.post('/receiveCall', function(req, res) {
 
     var twiml = new twilio.TwimlResponse();
 
-    twiml.say('Hi!  Thanks for giving me a call. Jan has been pretty busy, and has not had time to actually set something up here. Thanks for calling anyways.!');
+    twiml.say('Hi!  Thanks for giving me a call. Yan has been pretty busy, and has not had time to actually set something up here. Thanks for calling anyways.!');
 
     res.type('text/xml');
     res.send(twiml.toString());
