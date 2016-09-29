@@ -1,7 +1,5 @@
 var express = require('express');
 var app = express();
-var bodyparser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: false}));
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
