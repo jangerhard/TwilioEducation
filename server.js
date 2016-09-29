@@ -25,12 +25,28 @@ app.get('/', function(req, res) {
 });
 
 // set functionality to send sms
+app.get('/sendSMStoScharff', function(req, res) {
+
+    client.messages.create({
+        to: "+19292168151",
+        from: "+12039894740",
+        body: "Hello from Jan Schoepp",
+    }, function(err, message) {
+        console.log(message.sid);
+    });
+
+    // ejs render automatically looks in the views folder
+    res.render('index');
+
+});
+
+// set functionality to send sms
 app.get('/sendSMS', function(req, res) {
 
     client.messages.create({
         to: "+12035502615",
         from: "+12039894740",
-        body: "Hello from Jan Schoepp",
+        body: "Someone is testing your webpage!",
     }, function(err, message) {
         console.log(message.sid);
     });
