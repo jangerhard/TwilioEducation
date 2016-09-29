@@ -36,7 +36,7 @@ app.get('/sendSMStoScharff', function(req, res) {
     });
 
     // ejs render automatically looks in the views folder
-    res.render('index');
+    res.send('Message sent to Dr. Scharff!')
 
 });
 
@@ -52,7 +52,33 @@ app.get('/sendSMS', function(req, res) {
     });
 
     // ejs render automatically looks in the views folder
-    res.render('index');
+    res.send('Message sent to Jan!');
+
+});
+
+// Create a route to respond to a call
+app.post('/receiveSMS', function(req, res) {
+
+    //Create TwiML response
+    var twiml = new twilio.TwimlResponse();
+    twiml.message('Thanks for the text');
+
+    res.writeHead(200, {
+        'Content-Type': 'text/xml'
+    });
+    res.end(twiml.toString());
+
+});
+
+// Create a route to respond to a call
+app.post('/receiveCall', function(req, res) {
+
+    var twiml = new twilio.TwimlResponse();
+
+    twiml.say('Hi!  Thanks for giving me a call. Jan has been pretty busy, and has not had time to actually set something up here. Thanks for calling anyways.!');
+
+    res.type('text/xml');
+    res.send(twiml.toString());
 
 });
 
