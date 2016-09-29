@@ -67,7 +67,7 @@ app.post('/receiveSMS', function(req, res) {
     } else if(req.query.Body == 'Bye') {
         twiml.message('Goodbye');
     } else {
-        twiml.message('Thanks for the text. I haven\'t set up any functionality for that input yet. PS: Try \'test\'.');
+        twiml.message('Thanks for the text. I haven\'t set up any functionality for that input yet. PS: Try \'test\'. You wrote: ' + req.query.Body);
     }
 
     res.writeHead(200, {
