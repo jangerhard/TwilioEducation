@@ -8,5 +8,8 @@
   "dependencies": {
     "ejs": "~2.5.2",
     "express": "~4.14.0"
+  },
+  "engines": {
+    "npm": "2.14.20"
   }
 }
