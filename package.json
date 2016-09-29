@@ -1,24 +1,12 @@
 {
-  "name": "simple-website-2016",
-  "version": "1.0.0",
-  "description": "A simple website in node js",
-  "private": "true",
+  "name": "node-sample",
+  "description": "Our sample Node to Heroku app",
   "main": "server.js",
   "scripts": {
-    "build-css": "stylus source/stylesheets/index.styl -o static/css",
-    "watch-css": "stylus source/stylesheets/index.styl -o static/css -w",
-    "clean": "rm -rf static\\css && mkdir -p static\\css",
-    "build": "npm run clean && npm run build-css",
-    "watch": "npm run clean && npm run watch-css & nodemon server -e js,jade",
-    "start": "node server"
+    "start": "node server.js"
   },
-  "author": "Jan Gerhard",
-  "license": "",
   "dependencies": {
-    "express": "^4.14.0",
-    "jade": "^1.11.0",
-    "morgan": "^1.7.0",
-    "nodemon": "^1.9.1",
-    "stylus": "^0.54.5"
+    "ejs": "~1.0.0",
+    "express": "~4.9.8"
   }
 }
