@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+var bodyparser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: false}));
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
@@ -61,9 +63,10 @@ app.post('/receiveSMS', function(req, res) {
 
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
-    if (req.query.Body == 'Test' || req.query.Body == 'test'){
+
+    if (req.query.Body == 'Test'){
         twiml.message('Oh, are you testing?');
-    } else if(req.query.Body == 'bye') {
+    } else if(req.query.Body == 'Bye') {
         twiml.message('Goodbye');
     } else {
         twiml.message('Thanks for the text. I haven\'t set up any functionality for that input yet. PS: Try \'test\'.');
