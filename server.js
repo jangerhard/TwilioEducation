@@ -3,7 +3,9 @@ var app = express();
 var bodyParser = require('body-parser')
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
 
 // parse application/json
 app.use(bodyParser.json())
@@ -63,15 +65,15 @@ app.get('/sendSMS', function(req, res) {
 
 });
 
-// Create a route to respond to a call
+// Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
 
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
 
-    if (req.query.Body == 'Test'){
+    if (req.query.Body == 'Test') {
         twiml.message('Oh, are you testing?');
-    } else if(req.query.Body == 'Bye') {
+    } else if (req.query.Body == 'Bye') {
         twiml.message('Goodbye');
     } else {
         twiml.message('Thanks for the text. I haven\'t set up any functionality for that input yet. PS: Try \'test\'. You wrote: ' + req.query.Body);
@@ -87,13 +89,20 @@ app.post('/receiveSMS', function(req, res) {
 // Create a route to respond to a call
 app.post('/receiveCall', function(req, res) {
 
+    var stringResponse = 'Hi!  Thanks for giving me a call. ' +
+        'Yan has been pretty busy, and has not had time to actually set something up here. Thanks for calling anyways.!';
+
     var twiml = new twilio.TwimlResponse();
 
-    twiml.say('Hi!  Thanks for giving me a call. Yan has been pretty busy, and has not had time to actually set something up here. Thanks for calling anyways.!');
+    twiml.say(stringResponse, {
+        voice: 'woman',
+        language: 'en-gb'
+    });
 
     res.type('text/xml');
     res.send(twiml.toString());
 
+    console.log(resp.toString());
 });
 
 app.listen(port, function() {
