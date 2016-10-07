@@ -75,8 +75,9 @@ app.post('/receiveSMS', function(req, res) {
     console.log(req.cookies.count);
     var counter = parseInt(req.cookies.counter) || 0;
 
-    if (counter == 0 && req.body.Body == 'Hi') {
+    if (counter == 0 && (req.body.Body == 'Hi' || req.body.Body == 'Hey') {
         twiml.message('Hi! What\'s your name?');
+        counter = 0;
     } else if (req.body.Body == 'Reset') {
         twiml.message('Starting over.');
     } else if (counter == 1) {
