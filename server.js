@@ -4,11 +4,8 @@ var bodyParser = require('body-parser')
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: true
 }))
-
-// parse application/json
-app.use(bodyParser.json())
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
@@ -67,6 +64,27 @@ app.get('/sendSMS', function(req, res) {
 
 // Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
+
+    //Create TwiML response
+    var twiml = new twilio.TwimlResponse();
+
+    if (req.query.Body == 'Test') {
+        twiml.message('Oh, are you testing?');
+    } else if (req.query.Body == 'Bye') {
+        twiml.message('Goodbye');
+    } else {
+        twiml.message('Thanks for the text. I haven\'t set up any functionality for that input yet. PS: Try \'test\'. You wrote: ' + req.query.Body);
+    }
+
+    res.writeHead(200, {
+        'Content-Type': 'text/xml'
+    });
+    res.end(twiml.toString());
+
+});
+
+// Create a route to receive an SMS
+app.get('/receiveSMS', function(req, res) {
 
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
