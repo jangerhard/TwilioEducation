@@ -76,14 +76,14 @@ app.post('/receiveSMS', function(req, res) {
     var counter = parseInt(req.cookies.counter) || 0;
 
     if (req.query.Body == 'Test') {
-        twiml.message('Oh, are you testing? + '\nYou have sent ' + counter
-        + ' messages before.'');
+        twiml.message('Oh, are you testing?' + '\nYou have sent ' + counter
+        + ' messages the last few hours.');
     } else if (req.query.Body == 'Bye') {
         twiml.message('Goodbye' + '\nYou have sent ' + counter
-        + ' messages before.');
+        + ' messages the last few hours.');
     } else {
         twiml.message('You wrote: ' + req.query.Body + '\nYou have sent ' + counter
-        + ' messages before.');
+        + ' messages the last few hours.');
     }
 
     counter = counter + 1;
@@ -101,21 +101,29 @@ app.get('/receiveSMS', function(req, res) {
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
 
+    //Check cookies
+    console.log(req.cookies.count);
+    var counter = parseInt(req.cookies.counter) || 0;
+
     if (req.query.Body == 'Test') {
-        twiml.message('Oh, are you testing?');
+        twiml.message('Oh, are you testing?' + '\nYou have sent ' + counter
+        + ' messages the last few hours.');
     } else if (req.query.Body == 'Bye') {
-        twiml.message('Goodbye');
+        twiml.message('Goodbye' + '\nYou have sent ' + counter
+        + ' messages the last few hours.');
     } else {
-        twiml.message('Thanks for the text. I haven\'t set up any functionality for that input yet. PS: Try \'test\'. You wrote: ' + req.query.Body);
+        twiml.message('You wrote: ' + req.query.Body + '\nYou have sent ' + counter
+        + ' messages the last few hours.');
     }
 
+    counter = counter + 1;
+    res.cookie('counter',counter);
     res.writeHead(200, {
         'Content-Type': 'text/xml'
     });
     res.end(twiml.toString());
 
 });
-
 // Create a route to respond to a call
 app.post('/receiveCall', function(req, res) {
 
