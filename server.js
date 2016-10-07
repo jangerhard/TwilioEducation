@@ -1,21 +1,22 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser')
+var express = require('express'),
+    bodyParser = require('body-parser'),
+    twilio = require('twilio');
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({
-    extended: true
-}))
+var app = express();
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
 var port = process.env.PORT || 3000;
 
+//Twilio stuff
 var accountSid = 'ACf4e148816559544ed7ce17003dcc37e5';
 var authToken = 'a54f023543553bdcac6fbada4f1b0a0c';
-
-var twilio = require('twilio');
 var client = new twilio.RestClient(accountSid, authToken);
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
