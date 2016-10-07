@@ -1,6 +1,7 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
-    twilio = require('twilio');
+    twilio = require('twilio'),
+    cookieParser = require('cookie-parser');
 
 var app = express();
 
@@ -17,6 +18,7 @@ var client = new twilio.RestClient(accountSid, authToken);
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(cookieParser());
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -69,14 +71,23 @@ app.post('/receiveSMS', function(req, res) {
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
 
+    //Check cookies
+    console.log(req.cookies.count);
+    var counter = parseInt(req.cookies.counter) || 0;
+
     if (req.query.Body == 'Test') {
-        twiml.message('Oh, are you testing?');
+        twiml.message('Oh, are you testing? + '\nYou have sent ' + counter
+        + ' messages before.'');
     } else if (req.query.Body == 'Bye') {
-        twiml.message('Goodbye');
+        twiml.message('Goodbye' + '\nYou have sent ' + counter
+        + ' messages before.');
     } else {
-        twiml.message('Thanks for the text. I haven\'t set up any functionality for that input yet. PS: Try \'test\'. You wrote: ' + req.query.Body);
+        twiml.message('You wrote: ' + req.query.Body + '\nYou have sent ' + counter
+        + ' messages before.');
     }
 
+    counter = counter + 1;
+    res.cookie('counter',counter);
     res.writeHead(200, {
         'Content-Type': 'text/xml'
     });
