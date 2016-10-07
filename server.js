@@ -75,14 +75,14 @@ app.post('/receiveSMS', function(req, res) {
     console.log(req.cookies.count);
     var counter = parseInt(req.cookies.counter) || 0;
 
-    if (req.query.Body == 'Test') {
-        twiml.message('Oh, are you testing?' + '\nYou have sent ' + counter
-        + ' messages the last few hours.');
-    } else if (req.query.Body == 'Bye') {
-        twiml.message('Goodbye' + '\nYou have sent ' + counter
-        + ' messages the last few hours.');
+    if (counter == 0 && req.body.Body == 'Hi') {
+        twiml.message('Hi! What\'s your name?');
+    } else if (req.body.Body == 'Reset') {
+        twiml.message('Starting over.');
+    } else if (counter == 1) {
+        twiml.message('Hi ' + req.body.Body + "!");
     } else {
-        twiml.message('You wrote: ' + req.query.Body + '\nYou have sent ' + counter
+        twiml.message('You wrote: ' + req.body.Body + '\nYou have sent ' + counter
         + ' messages the last few hours.');
     }
 
