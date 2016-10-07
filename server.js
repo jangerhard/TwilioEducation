@@ -77,9 +77,10 @@ app.post('/receiveSMS', function(req, res) {
 
     if (counter == 0 && (req.body.Body == 'Hi' || req.body.Body == 'Hey')) {
         twiml.message('Hi! What\'s your name?');
-        counter = 0;
+
     } else if (req.body.Body == 'Reset') {
         twiml.message('Starting over.');
+        counter = -1;
     } else if (counter == 1) {
         twiml.message('Hi ' + req.body.Body + "!");
     } else {
