@@ -76,14 +76,14 @@ app.post('/receiveSMS', function(req, res) {
     var counter = parseInt(req.cookies.counter) || 0;
 
     if (req.query.Body == 'Test') {
-        twiml.message('Oh, are you testing? + '\nYou have sent ' + counter
-        + ' messages before.'');
+        twiml.message('Oh, are you testing?' + '\nYou have sent ' + counter
+        + ' messages the last few hours.');
     } else if (req.query.Body == 'Bye') {
         twiml.message('Goodbye' + '\nYou have sent ' + counter
-        + ' messages before.');
+        + ' messages the last few hours.');
     } else {
         twiml.message('You wrote: ' + req.query.Body + '\nYou have sent ' + counter
-        + ' messages before.');
+        + ' messages the last few hours.');
     }
 
     counter = counter + 1;
