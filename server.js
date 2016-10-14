@@ -96,9 +96,7 @@ app.post('/receiveSMS', function(req, res) {
         } else {
             twiml.message('You have not started the service. Text \'Start\' to start!');
         }
-    }
-
-    if (counter == 1) { // Selected subject
+    } else if (counter == 1) { // Selected subject
         var subject = parseInt(smsContent);
         if (isNaN(subject) || (subject < 1 && subject > 3))
             twiml.message('You have to input a number from 1 to 3!');
