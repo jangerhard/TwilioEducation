@@ -65,6 +65,8 @@ app.get('/sendSMS', function(req, res) {
 
 });
 
+var serviceName = "QuizMaster";
+
 // Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
 
@@ -75,27 +77,66 @@ app.post('/receiveSMS', function(req, res) {
     console.log(req.cookies.count);
     var counter = parseInt(req.cookies.counter) || 0;
 
-    if (counter == 0 && (req.body.Body == 'Hi' || req.body.Body == 'Hey')) {
-        twiml.message('Hi! What\'s your name?');
+    var smsContent = req.body.Body.toLowerCase().trim();
 
-    } else if (req.body.Body == 'Reset') {
+    if (smsContent == 'restart') { // Restarting the service
         twiml.message('Starting over.');
         counter = -1;
-    } else if (counter == 1) {
-        twiml.message('Hi ' + req.body.Body + "!");
-    } else {
-        twiml.message('You wrote: ' + req.body.Body + '\nYou have sent ' + counter
-        + ' messages the last few hours.' + '\nSend \'Reset\' to start over.');
+    } else if (counter == 0) { // First message received by user
+        if (smsContent == 'start') {
+            twiml.message('Hi and welcome to ' + serviceName + '!' +
+                '\nPlease select one of the following options using a single number: ' +
+                '\n1. Biology' +
+                '\n2. Physics' +
+                '\n3. Maths' +
+                '\n\nSend \'restart\' at any time to start over.');
+            counter++;
+        } else {
+            twiml.message('You have not started the service. Text \'Start\' to start!');
+        }
     }
 
-    counter = counter + 1;
-    res.cookie('counter',counter);
+    if (counter == 1) { // Selected subject
+        var subject = parseInt(smsContent);
+        if (isNaN(subject) || (subject < 1 && subject > 3))
+            twiml.message('You have to input a number from 1 to 3!');
+        else {
+            twiml.message(getQuizText(subject, counter));
+            counter++;
+        }
+
+    } else {
+
+    }
+
+    res.cookie('counter', counter);
     res.writeHead(200, {
         'Content-Type': 'text/xml'
     });
     res.end(twiml.toString());
 
 });
+
+function getQuizText(subject, counter) {
+    var text;
+
+    switch (subject) {
+        case 1: // Biology
+            text = 'You selected Biology!';
+            break;
+        case 2: // Physics
+            text = 'You selected Physics!';
+            break;
+        case 3: // Maths
+            text = 'You selected Maths!';
+            break;
+        default:
+            text = 'Something went wrong after selecting a subject.';
+
+    }
+
+    return text;
+}
 
 // Create a route to respond to a call
 app.post('/receiveCall', function(req, res) {
