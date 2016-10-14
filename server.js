@@ -70,6 +70,8 @@ var serviceName = "QuizMaster";
 // Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
 
+    console.log('Received sms: ' + req.body.Body);
+
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
 
@@ -81,7 +83,7 @@ app.post('/receiveSMS', function(req, res) {
 
     if (smsContent == 'restart') { // Restarting the service
         twiml.message('Starting over.');
-        counter = -1;
+        counter = 0;
     } else if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
             twiml.message('Hi and welcome to ' + serviceName + '!' +
