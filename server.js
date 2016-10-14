@@ -98,7 +98,7 @@ app.post('/receiveSMS', function(req, res) {
         }
     } else if (counter == 1) { // Selected subject
         var subject = parseInt(smsContent);
-        if (isNaN(subject) || (subject < 1 && subject > 3))
+        if (isNaN(subject) || (subject < 1 || subject > 3))
             twiml.message('You have to input a number from 1 to 3!');
         else {
             twiml.message(getQuizText(subject, counter));
