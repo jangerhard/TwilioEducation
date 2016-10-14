@@ -33,6 +33,12 @@ app.get('/', function(req, res) {
     res.render('index');
 });
 
+app.get('/twiliopart2', function(req, res) {
+
+    // ejs render automatically looks in the views folder
+    res.render('twiliopart2');
+});
+
 // set functionality to send sms
 app.get('/sendSMStoScharff', function(req, res) {
 
