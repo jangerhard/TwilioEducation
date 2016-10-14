@@ -142,7 +142,7 @@ function getQuizText(subject, counter) {
             '\n3. Nicola Tesla';
             break;
         case 2: // Physics
-            text = 'You selected Physics!'; +
+            text = 'You selected Physics!' +
             '\n\nQuestion 1: ' +
             '\nWhat is the force that holds back a sliding object?' +
             '\n1. Friction' +
@@ -150,7 +150,7 @@ function getQuizText(subject, counter) {
             '\n3. Deceleration';
             break;
         case 3: // Maths
-            text = 'You selected Maths!'; +
+            text = 'You selected Maths!' +
             '\n\nQuestion 1: ' +
             '\nA truck travels 225 km on the freeway at an average speed of 90 km/h.' +
             '\nHow long does the journey take?' +
