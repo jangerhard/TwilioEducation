@@ -126,7 +126,7 @@ app.post('/receiveSMS', function(req, res) {
     } else if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
             twiml.message('Hi and welcome to ' + serviceName + '!' +
-                '\nPlease select one of the following options using a single number: ' +
+                '\nPlease select one of the following options using a single character: ' +
                 '\nA. Biology' +
                 '\nB. Physics' +
                 '\nC. Maths' +
@@ -137,7 +137,7 @@ app.post('/receiveSMS', function(req, res) {
         }
     } else if (counter == 1) { // Selected subject
         var subject = smsContent;
-        if (subject != 'A' || subject != 'B' || subject != 'C')
+        if (!subject.equals('a') || !subject.equals('b') || !subject.equals('c'))
             twiml.message('You have to input \'A\', \'B\', or \'C\'!');
         else {
             twiml.message(getQuizText(subject, counter));
@@ -146,7 +146,7 @@ app.post('/receiveSMS', function(req, res) {
 
     } else if (counter == 2) { // Answering
         var answer = smsContent;
-        if (subject != 'A' || subject != 'B' || subject != 'C')
+        if (subject != 'a' || subject != 'b' || subject != 'c')
             twiml.message('You have to input \'A\', \'B\', or \'C\'!');
         else {
             // TODO: Fix checking for answers
