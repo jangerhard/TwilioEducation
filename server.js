@@ -86,15 +86,15 @@ app.post('/receiveSMS', function(req, res) {
 
                 if (snapshot.val() == null) {
                     console.log("No user found for this number.");
-                    twiml.message("We could not find a user associated with your number! " +
-                        "\nPlease text us your name.");
+                    twiml.message('We could not find a user associated with your number! ' +
+                        '\nPlease text us your name.');
                     counter = REGISTER_CONSTANT;
 
                 } else {
 
                     console.log("User found for this number: " + snapshot.val().key +
                                 "\nName: " + snapshot.val().name);
-                    twiml.message("Welcome back, " + snapshot.val().name + "!\n"
+                    twiml.message('Welcome back, ' + snapshot.val().name + '!\n'
                                   + chooseCategory());
                     console.log("Message sent");
                     counter = 1;
