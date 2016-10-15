@@ -88,7 +88,7 @@ app.post('/receiveSMS', function(req, res) {
             if (users.indexOf(number) !== -1) { // User exists
                 console.log("User found for this number: " + number);
                 twilioClient.sendSMS(number, chooseCategory());
-                updateCurrentSubject(number, "Nothing");
+                updateCurrentSubject(number, "nothing");
                 counter = 1;
 
             } else {
@@ -138,6 +138,7 @@ app.post('/receiveSMS', function(req, res) {
 
 function checkAnswer(number, answer, counter) {
     var userRef = db.ref("Users/" + number);
+
     userRef.once("value", function(snapshot) {
         var subject = snapshot.val().subject;
 
@@ -164,7 +165,7 @@ function registerUser(number, username) {
 
     ref.child(number).set({
         name: username,
-        category: "nothing"
+        subject: "nothing"
     });
 
 }
@@ -183,30 +184,15 @@ function chooseCategory() {
 function updateCurrentSubject(number, subject) {
     var subjectRef = db.ref("Users").child(number);
     subjectRef.update({
-        "subject": subject
+        "subject": getSubject(subject),
     });
 }
 
-function sendQuizText(number, subject, counter) {
+function sendQuizText(number, subjectChar, counter) {
     var text;
     var sub;
 
-    switch (subject) {
-        case 'Biology':
-        case 'a': // Biology
-            sub = 'Biology';
-            break;
-        case 'Physics':
-        case 'b': // Physics
-            sub = 'Physics'
-            break;
-        case 'Maths':
-        case 'c': // Maths
-            sub = 'Maths'
-            break;
-        default:
-            console.error('Something went wrong after selecting a subject. Input: ' + subject);
-    }
+    sub = getSubject(subjectChar);
 
     //Gets Question and answer based on subject and counter
     var ref = db.ref("Questions/" + sub + "/Q" + counter);
@@ -222,6 +208,29 @@ function sendQuizText(number, subject, counter) {
     }, function(errorObject) {
         twilioClient.sendSMS(number, "You've completed all the tests!");
     });
+}
+
+function getSubject(subjectChar){
+
+  var sub;
+
+  switch (subjectChar) {
+      case 'a': // Biology
+          sub = 'Biology';
+          break;
+      case 'b': // Physics
+          sub = 'Physics'
+          break;
+      case 'c': // Maths
+          sub = 'Maths'
+          break;
+      default:
+          console.error('Something went wrong after selecting a subject. Input: ' + subject);
+          return "Error";
+  }
+
+  return sub;
+
 }
 
 
