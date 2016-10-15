@@ -109,7 +109,8 @@ var serviceName = "QuizMaster";
 // Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
 
-    console.log('Received sms: ' + req.body.Body);
+    console.log('Received sms: ' + req.body.Body +
+                '\nFrom number: ' + req.body.From);
 
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
@@ -137,12 +138,12 @@ app.post('/receiveSMS', function(req, res) {
         }
     } else if (counter == 1) { // Selected subject
         var subject = smsContent;
-        if (subject !== 'a' || subject !== 'b' || subject !== 'c')
-            twiml.message('You have to input \'A\', \'B\', or \'C\'!');
-        else {
+        if (subject === 'a' || subject === 'b' || subject === 'c') {
             twiml.message(getQuizText(subject, counter));
             counter++;
-        }
+        } else
+            twiml.message('You have to input \'A\', \'B\', or \'C\'!');
+
 
     } else if (counter == 2) { // Answering
         var answer = smsContent;
