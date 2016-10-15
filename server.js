@@ -156,10 +156,12 @@ function checkAnswer(number, answer, counter) {
             console.log("Correct answer: " + s_shot.val().correct +
                         "Answer from user: " + answer);
 
-            if (s_shot.val().correct === answer)
-                twilioClient.sendSMS(number, 'That is correct! Next question: ');
+            if (s_shot.val().correct === answer){
+              incrementTotCorrect(number);
+              twilioClient.sendSMS(number, 'That is correct!');
+            }
             else
-                twilioClient.sendSMS(number, 'That is wrong.. Next question: ');
+                twilioClient.sendSMS(number, 'That is wrong..');
 
             sendQuizText(number, subject, counter + 1);
         }, function(errorObject) {
@@ -200,6 +202,13 @@ function updateCurrentSubject(number, subject) {
     subjectRef.update({
         "subject": sub,
     });
+}
+
+function incrementTotCorrect(number){
+  var subjectRef = db.ref("Users").child(number).child("totCorrect");
+  subjectRef.transaction(function(currentValue){
+      return (current_value || 0) + 1;
+  });
 }
 
 function resetUser(number){
