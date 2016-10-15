@@ -136,11 +136,12 @@ app.post('/receiveSMS', function(req, res) {
         twiml.message('For now that is all.. Text \'restart\' to start over!');
     }
 
+
     res.cookie('counter', counter);
     res.writeHead(200, {
         'Content-Type': 'text/xml'
     });
-    console.log("End of interaction.");
+    console.log("End of interaction with updated counter: " + counter);
     res.end(twiml.toString());
 
 });
