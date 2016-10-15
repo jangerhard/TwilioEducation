@@ -150,14 +150,14 @@ function checkAnswer(number, answer, counter) {
 
             if (s_shot.val() == null)
                 twilioClient.sendSMS(number, "You completed the entire quiz!" +
-              "\nText 'restart' to try again!");
+                    "\nText 'restart' to try again!");
 
             if (s_shot.val().correct == answer)
                 twilioClient.sendSMS(number, 'That is correct! Next question: ');
             else
                 twilioClient.sendSMS(number, 'That is wrong.. Next question: ');
 
-            sendQuizText(number, subject, counter+1);
+            sendQuizText(number, subject, counter + 1);
         }, function(errorObject) {
             console.error(errorObject);
         });
@@ -221,27 +221,30 @@ function sendQuizText(number, subjectChar, counter) {
     });
 }
 
-function getSubject(subjectChar){
+function getSubject(subjectChar) {
 
-  var sub;
+    var sub;
 
-  switch (subjectChar) {
-      case 'a': // Biology
-          sub = 'Biology';
-          break;
-      case 'b': // Physics
-          sub = 'Physics'
-          break;
-      case 'c': // Maths
-          sub = 'Maths'
-          break;
-      case 'nothing':
-      default:
-          console.error('Something went wrong after selecting a subject. Input: ' + subjectChar);
-          return "nothing";
-  }
+    switch (subjectChar) {
+        case 'Biology':
+        case 'a': // Biology
+            sub = 'Biology';
+            break;
+        case 'Physics'
+        case 'b': // Physics
+            sub = 'Physics'
+            break;
+        case 'Maths':
+        case 'c': // Maths
+            sub = 'Maths'
+            break;
+        case 'nothing':
+        default:
+            console.error('Something went wrong after selecting a subject. Input: ' + subjectChar);
+            return "nothing";
+    }
 
-  return sub;
+    return sub;
 
 }
 
