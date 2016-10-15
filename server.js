@@ -178,8 +178,7 @@ function sendQuizText(number, subject, counter) {
             sub = 'Maths'
             break;
         default:
-            text = 'Something went wrong after selecting a subject.';
-            return text;
+            console.log('Something went wrong after selecting a subject.');
     }
 
     //Gets Question and answer based on subject and counter
@@ -191,10 +190,10 @@ function sendQuizText(number, subject, counter) {
             "\nB: " + snapshot.val().B +
             "\nC: " + snapshot.val().C;
 
-        return text;
+        twilioClient.sendSMS(number, text);
 
     }, function(errorObject) {
-        return "You've completed all the tests!";
+        twilioClient.sendSMS(number, "You've completed all the tests!");
     });
 }
 
