@@ -149,7 +149,7 @@ function checkAnswer(number, answer, counter) {
 
         questionRef.once("value", function(s_shot) {
 
-            if (s_shot.val() == null)
+            if (s_shot.val() == null || s_shot == null)
                 twilioClient.sendSMS(number, "You completed the entire quiz!" +
                     "\nText 'restart' to try again!");
 
