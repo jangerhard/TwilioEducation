@@ -59,6 +59,7 @@ app.get('/twiliopart2', function(req, res) {
 app.post('/receiveSMS', function(req, res) {
 
     var REGISTER_CONSTANT = -10;
+    var SELECTING_SUBJECT_CONSTANT = -20;
 
     var number = req.body.From;
 
@@ -72,7 +73,7 @@ app.post('/receiveSMS', function(req, res) {
 
     var smsContent = req.body.Body.toLowerCase().trim();
 
-    if (smsContent == 'restart') { // Restarting the service
+    if (smsContent == 'restart' || smsContent == 'reset') { // Restarting the service
         twilioClient.sendSMS(number, 'Starting over.');
         updateCurrentSubject(number, "Nothing");
         counter = 0;
@@ -99,18 +100,18 @@ app.post('/receiveSMS', function(req, res) {
         } else {
             twilioClient.sendSMS(number, 'You have not started the service. Text \'Start\' to start!');
         }
-    } else if (counter == 1) { // Selected starting subject
+    } else if (counter == SELECTING_SUBJECT_CONSTANT) { // Selected starting subject
 
         console.log("User chose: " + smsContent);
         var subject = smsContent;
         if (subject === 'a' || subject === 'b' || subject === 'c') {
             sendQuizText(number, subject, counter);
             updateCurrentSubject(number, subject);
-            counter++;
+            counter = 1;
         } else
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
 
-    } else if (counter == 2) { // Answering
+    } else if (counter == 1) { // Answering
         var answer = smsContent;
 
         // TODO: Fix checking for answers
@@ -136,12 +137,12 @@ app.post('/receiveSMS', function(req, res) {
 
 function checkAnswer(number, answer, counter) {
 
+    console.log("Checking answer for Q" + counter);
+
     var userRef = db.ref("Users/" + number);
 
     userRef.once("value", function(snapshot) {
         var subject = snapshot.val().subject;
-
-        console.log("Checking answer for " + subject + "/Q" + counter);
 
         var questionRef = db.ref("Questions/" + subject + "/Q" + counter);
 
