@@ -142,8 +142,8 @@ function checkAnswer(number, answer, counter) {
 
         var questionRef = db.ref("Questions/" + subject + "/Q" + counter);
 
-        questionRef.once("value", function(snapshot) {
-            if (snapshot.val().correct == answer)
+        questionRef.once("value", function(s_shot) {
+            if (s_shot.val().correct == answer)
                 twilioClient.sendSMS(number, 'That is correct! Next question: ');
             else
                 twilioClient.sendSMS(number, 'That is wrong.. Next question: ');
@@ -226,7 +226,7 @@ function getSubject(subjectChar){
           break;
       default:
           console.error('Something went wrong after selecting a subject. Input: ' + subjectChar);
-          return "Error";
+          return "Nothing";
   }
 
   return sub;
