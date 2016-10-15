@@ -161,11 +161,15 @@ function chooseCategory(number) {
 function UserExists(number) {
     var ref = db.ref("Users/" + number);
     ref.once("value", function(snapshot) {
-        console.log("User found for this number: " + snapshot.name);
+        var u = snapshot.val().name;
+
+        if (u == null) {
+          console.log("No user found for this number.");
+          return false;
+        }
+
+        console.log("User found for this number: " + u);
         return true;
-    }, function(errorObject) {
-        console.log("No user found for this number.");
-        return false;
     });
 }
 
