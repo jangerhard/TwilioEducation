@@ -135,10 +135,13 @@ app.post('/receiveSMS', function(req, res) {
 });
 
 function checkAnswer(number, answer, counter) {
+
     var userRef = db.ref("Users/" + number);
 
     userRef.once("value", function(snapshot) {
         var subject = snapshot.val().subject;
+
+        console.log("Checking answer for " + subject + "/Q" + counter);
 
         var questionRef = db.ref("Questions/" + subject + "/Q" + counter);
 
