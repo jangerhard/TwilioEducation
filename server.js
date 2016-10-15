@@ -157,7 +157,7 @@ function checkAnswer(number, answer, counter) {
                     "\nAnswer from user: " + answer +
                 "\cCorrect? - " + s_shot.val().correct.toLowerCase === answer);
 
-            if (s_shot.val().correct.toLowerCase === answer) {
+            if (s_shot.val().correct.toLowerCase === ''+answer) {
                 incrementTotCorrect(number);
                 twilioClient.sendSMS(number, 'That is correct!');
             } else
