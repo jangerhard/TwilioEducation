@@ -90,19 +90,18 @@ app.post('/receiveSMS', function(req, res) {
     if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
 
-                if(users.indexOf(number) !== -1) {
-                    console.log("No user found for this number.");
-                    twiml.message('We could not find a user associated with your number!' +
-                        '\nPlease text us your name.');
-                    counter = REGISTER_CONSTANT;
-
-                } else {
-                    console.log("User found for this number: " + snapshot.key +
-                        "\nName: " + snapshot.val().name);
-                    twiml.message('Welcome back, ' + snapshot.val().name + '!\n' +
+                if(users.indexOf(number) !== -1) { // User exists
+                    console.log("User found for this number: " + number);
+                    twiml.message('Welcome back!\n' +
                         chooseCategory());
                     console.log("Message sent");
                     counter = 1;
+
+                } else {
+                  console.log("No user found for this number.");
+                  twiml.message('We could not find a user associated with your number!' +
+                      '\nPlease text us your name.');
+                  counter = REGISTER_CONSTANT;
                 }
 
         } else {
