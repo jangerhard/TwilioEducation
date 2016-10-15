@@ -80,6 +80,7 @@ app.post('/receiveSMS', function(req, res) {
 
     if (smsContent == 'restart') { // Restarting the service
         twilioClient.sendSMS(number, 'Starting over.');
+        updateCurrentSubject(number, "Nothing");
         counter = 0;
     } else if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
@@ -137,12 +138,12 @@ app.post('/receiveSMS', function(req, res) {
 
 function checkAnswer(number, answer, counter) {
     var userRef = db.ref("Users/" + number);
-    ref.once("value", function(snapshot) {
+    userRef.once("value", function(snapshot) {
         var subject = snapshot.val().subject;
 
         var questionRef = db.ref("Questions/" + subject + "/Q" + counter);
 
-        ref.once("value", function(snapshot) {
+        questionRef.once("value", function(snapshot) {
             if (snapshot.val().correct == answer)
                 twilioClient.sendSMS(number, 'That is correct! Next question: ');
             else
