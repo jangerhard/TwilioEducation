@@ -72,23 +72,22 @@ app.post('/receiveSMS', function(req, res) {
 
     var smsContent = req.body.Body.toLowerCase().trim();
 
-    if (smsContent == 'restart') { // Restarting the service
-        twilioClient.sendSMS(number, 'Starting over.');
-        counter = 0;
-    }
-
     if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
         twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!");
         counter = 0;
     }
 
-    if (counter == 0) { // First message received by user
+    if (smsContent == 'restart') { // Restarting the service
+        twilioClient.sendSMS(number, 'Starting over.');
+        counter = 0;
+    } else if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
 
             if (users.indexOf(number) !== -1) { // User exists
                 console.log("User found for this number: " + number);
                 twilioClient.sendSMS(number, chooseCategory());
+                updateCurrentSubject(number, "Nothing");
                 counter = 1;
 
             } else {
@@ -101,30 +100,28 @@ app.post('/receiveSMS', function(req, res) {
         } else {
             twilioClient.sendSMS(number, 'You have not started the service. Text \'Start\' to start!');
         }
-    } else if (counter == 1) { // Selected subject
+    } else if (counter == 1) { // Selected starting subject
 
         console.log("User chose: " + smsContent);
         var subject = smsContent;
         if (subject === 'a' || subject === 'b' || subject === 'c') {
             sendQuizText(number, subject, counter);
+            updateCurrentSubject(number, subject);
             counter++;
         } else
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
 
     } else if (counter == 2) { // Answering
         var answer = smsContent;
-        if (subject !== 'a' || subject !== 'b' || subject !== 'c')
+
+        // TODO: Fix checking for answers
+        if (answer === 'a' || answer === 'b' || answer === 'c') {
+
+            checkAnswer(number, answer, counter);
+            counter++;
+        } else
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
-        else {
-            // TODO: Fix checking for answers
-            if (answer != '1')
-                twilioClient.sendSMS(number, 'Unfortunatelly that is wrong.. Try again!');
-            else {
-                twilioClient.sendSMS(number, 'That is correct! Well done!');
-                sendQuizText(number, subject, counter);
-                counter++;
-            }
-        }
+
     } else {
         twilioClient.sendSMS(number, 'For now that is all.. Text \'restart\' to start over!');
     }
@@ -137,6 +134,28 @@ app.post('/receiveSMS', function(req, res) {
     res.end("SMS sent to " + number);
 
 });
+
+function checkAnswer(number, answer, counter) {
+    var userRef = db.ref("Users/" + number);
+    ref.once("value", function(snapshot) {
+        var subject = snapshot.val().subject;
+
+        var questionRef = db.ref("Questions/" + subject + "/Q" + counter);
+
+        ref.once("value", function(snapshot) {
+            if (snapshot.val().correct == answer)
+                twilioClient.sendSMS(number, 'That is correct! Next question: ');
+            else
+                twilioClient.sendSMS(number, 'That is wrong.. Next question: ');
+
+            sendQuizText(number, subject, counter+1);
+        }, function(errorObject) {
+            console.error(errorObject);
+        });
+    }, function(errorObject) {
+        console.error(errorObject);
+    });
+}
 
 function registerUser(number, username) {
 
@@ -160,25 +179,32 @@ function chooseCategory() {
     return txt;
 }
 
+function updateCurrentSubject(number, subject) {
+    var subjectRef = db.ref("Users").child(number);
+    subjectRef.update({
+        "subject": subject
+    });
+}
+
 function sendQuizText(number, subject, counter) {
     var text;
     var sub;
 
     switch (subject) {
-        case 'A':
+        case 'Biology':
         case 'a': // Biology
             sub = 'Biology';
             break;
-        case 'B':
+        case 'Physics':
         case 'b': // Physics
             sub = 'Physics'
             break;
-        case 'C':
+        case 'Maths':
         case 'c': // Maths
             sub = 'Maths'
             break;
         default:
-            console.log('Something went wrong after selecting a subject.');
+            console.error('Something went wrong after selecting a subject. Input: ' + subject);
     }
 
     //Gets Question and answer based on subject and counter
