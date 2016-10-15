@@ -28,6 +28,13 @@ db.ref("Users").on('child_added', function(snapshot) {
     users.push(snapshot.key);
     console.log('Added user: ' + snapshot.key);
 });
+db.ref("Users").on("child_removed", function(snapshot) {
+  var index = users.indexOf(snapshot.key);
+  if (index > -1) {
+    array.splice(index, 1);
+    console.log('Removed user: ' + snapshot.key);
+  }
+});
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -124,13 +131,12 @@ app.post('/receiveSMS', function(req, res) {
         twilioClient.sendSMS(number, 'For now that is all.. Text \'restart\' to start over!');
     }
 
-
     res.cookie('counter', counter);
     res.writeHead(200, {
         'Content-Type': 'text/xml'
     });
     console.log("End of interaction with updated counter: " + counter);
-    res.end(twiml.toString());
+    res.end("SMS sent to " + number);
 
 });
 
@@ -147,7 +153,7 @@ function registerUser(number, username) {
 
 function chooseCategory() {
 
-    var txt = '!\nPlease select one of the following options using a single character: ' +
+    var txt = 'Please select one of the following options using a single character: ' +
         '\nA. Biology' +
         '\nB. Physics' +
         '\nC. Maths' +
