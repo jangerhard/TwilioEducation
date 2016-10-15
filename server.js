@@ -228,23 +228,23 @@ function getSubject(subjectChar) {
     switch (subjectChar) {
         case 'Biology':
         case 'a': // Biology
-            sub = 'Biology';
-            break;
+            return 'Biology';
+
         case 'Physics':
         case 'b': // Physics
-            sub = 'Physics'
-            break;
+            return 'Physics';
+
         case 'Maths':
         case 'c': // Maths
-            sub = 'Maths'
-            break;
+            return 'Maths';
+
         case 'nothing':
+            return 'nothing';
+
         default:
             console.error('Something went wrong after selecting a subject. Input: ' + subjectChar);
             return "nothing";
     }
-
-    return sub;
 
 }
 
