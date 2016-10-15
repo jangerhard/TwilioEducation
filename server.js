@@ -90,7 +90,7 @@ app.post('/receiveSMS', function(req, res) {
     if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
 
-                if(numbers.indexOf(number) !== -1) {
+                if(users.indexOf(number) !== -1) {
                     console.log("No user found for this number.");
                     twiml.message('We could not find a user associated with your number!' +
                         '\nPlease text us your name.');
