@@ -81,7 +81,7 @@ app.post('/receiveSMS', function(req, res) {
     if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
 
-            if (UserExists(number)){
+            if (UserExists(number) == true){
               twiml.message(chooseCategory(number));
               counter = 1;
             }
