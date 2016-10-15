@@ -137,7 +137,7 @@ app.post('/receiveSMS', function(req, res) {
         }
     } else if (counter == 1) { // Selected subject
         var subject = smsContent;
-        if (!subject.equals('a') || !subject.equals('b') || !subject.equals('c'))
+        if (subject != 'a' || subject != 'b' || subject != 'c')
             twiml.message('You have to input \'A\', \'B\', or \'C\'!');
         else {
             twiml.message(getQuizText(subject, counter));
