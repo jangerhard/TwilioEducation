@@ -88,7 +88,7 @@ app.post('/receiveSMS', function(req, res) {
                 console.log("User found for this number: " + number);
                 twilioClient.sendSMS(number, chooseCategory());
                 updateCurrentSubject(number, "nothing");
-                counter = 1;
+                counter = SELECTING_SUBJECT_CONSTANT;
 
             } else {
                 console.log("No user found for this number.");
@@ -148,7 +148,7 @@ function checkAnswer(number, answer, counter) {
 
         questionRef.once("value", function(s_shot) {
 
-            if (s_shot == null)
+            if (s_shot.val() == null)
                 twilioClient.sendSMS(number, "You completed the entire quiz!" +
               "\nText 'restart' to try again!");
 
