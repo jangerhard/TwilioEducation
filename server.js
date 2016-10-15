@@ -1,19 +1,14 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
-    twilio = require('twilio'),
     cookieParser = require('cookie-parser'),
-    firebase = require("firebase");
+    firebase = require("firebase"),
+    twilioClient = require('./twilioClient');
 
 var app = express();
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
 var port = process.env.PORT || 3000;
-
-//Twilio stuff
-var accountSid = 'ACf4e148816559544ed7ce17003dcc37e5';
-var authToken = 'a54f023543553bdcac6fbada4f1b0a0c';
-var client = new twilio.RestClient(accountSid, authToken);
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
@@ -53,9 +48,6 @@ app.get('/twiliopart2', function(req, res) {
     res.render('twiliopart2');
 });
 
-//Create TwiML response
-var twiml = new twilio.TwimlResponse();
-
 // Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
 
@@ -66,9 +58,6 @@ app.post('/receiveSMS', function(req, res) {
     console.log('Received sms: ' + req.body.Body +
         '\nFrom number: ' + number);
 
-    //Create TwiML response
-    var twiml = new twilio.TwimlResponse();
-
     //Check cookies
     console.log("Cookie: " + req.cookies.count);
     var counter = parseInt(req.cookies.counter) || 0;
@@ -77,63 +66,62 @@ app.post('/receiveSMS', function(req, res) {
     var smsContent = req.body.Body.toLowerCase().trim();
 
     if (smsContent == 'restart') { // Restarting the service
-        twiml.message('Starting over.');
+        twilioClient.sendSMS(number, 'Starting over.');
         counter = 0;
     }
 
     if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
-        twiml.message("You are registered, " + req.body.Body + "!");
+        twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!");
         counter = 0;
     }
 
     if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
 
-                if(users.indexOf(number) !== -1) { // User exists
-                    console.log("User found for this number: " + number);
-                    twiml.message('Welcome back!\n' +
-                        chooseCategory());
-                    console.log("Message sent");
-                    counter = 1;
+            if (users.indexOf(number) !== -1) { // User exists
+                console.log("User found for this number: " + number);
+                twilioClient.sendSMS(number, 'Welcome back!\n' +
+                    chooseCategory());
+                console.log("Message sent");
+                counter = 1;
 
-                } else {
-                  console.log("No user found for this number.");
-                  twiml.message('We could not find a user associated with your number!' +
-                      '\nPlease text us your name.');
-                  counter = REGISTER_CONSTANT;
-                }
+            } else {
+                console.log("No user found for this number.");
+                twilioClient.sendSMS(number, 'We could not find a user associated with your number!' +
+                    '\nPlease text us your name.');
+                counter = REGISTER_CONSTANT;
+            }
 
         } else {
-            twiml.message('You have not started the service. Text \'Start\' to start!');
+            twilioClient.sendSMS(number, 'You have not started the service. Text \'Start\' to start!');
         }
     } else if (counter == 1) { // Selected subject
 
         console.log("User chose: " + smsContent);
         var subject = smsContent;
         if (subject === 'a' || subject === 'b' || subject === 'c') {
-            twiml.message(getQuizText(subject, counter));
+            twilioClient.sendSMS(number, sendQuizText(subject, counter));
             counter++;
         } else
-            twiml.message('You have to input \'A\', \'B\', or \'C\'!');
-
+            twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
 
     } else if (counter == 2) { // Answering
         var answer = smsContent;
         if (subject !== 'a' || subject !== 'b' || subject !== 'c')
-            twiml.message('You have to input \'A\', \'B\', or \'C\'!');
+            twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
         else {
             // TODO: Fix checking for answers
             if (answer != '1')
-                twiml.message('Unfortunatelly that is wrong.. Try again!');
+                twilioClient.sendSMS(number, 'Unfortunatelly that is wrong.. Try again!');
             else {
-                twiml.message('That is correct! Well done!');
-                twiml.message(getQuizText(subject, counter));
+                twilioClient.sendSMS(number, 'That is correct! Well done!');
+                twilioClient.sendSMS(number, getQuizText(subject, counter));
                 counter++;
             }
         }
     } else {
-        twiml.message('For now that is all.. Text \'restart\' to start over!');
+        twilioClient.sendSMS(number, 'For now that is all.. Text \'restart\' to start over!');
     }
 
 
@@ -165,9 +153,10 @@ function chooseCategory() {
         '\nC. Maths' +
         '\n\nSend \'restart\' at any time to start over.'
 
+    return txt;
 }
 
-function getQuizText(subject, counter) {
+function sendQuizText(number, subject, counter) {
     var text;
     var sub;
 
@@ -194,27 +183,14 @@ function getQuizText(subject, counter) {
             "\nA: " + snapshot.val().A +
             "\nB: " + snapshot.val().B +
             "\nC: " + snapshot.val().C;
+
         return text;
+
     }, function(errorObject) {
         return "You've completed all the tests!";
     });
 }
 
-// set functionality to send sms
-app.get('/sendSMStoScharff', function(req, res) {
-
-    client.messages.create({
-        to: "+19292168151",
-        from: "+12039894740",
-        body: "Hello from Jan Schoepp",
-    }, function(err, message) {
-        console.log(message.sid);
-    });
-
-    // ejs render automatically looks in the views folder
-    res.send('Message sent to Dr. Scharff!')
-
-});
 
 // testing Firebase
 app.get('/test', function(req, res) {
@@ -233,6 +209,14 @@ app.get('/test', function(req, res) {
 });
 
 // set functionality to send sms
+app.get('/sendSMStoScharff', function(req, res) {
+
+    twilioClient.sendSMS("+19292168151", "Hello from Jan Schoepp");
+    res.send('Message sent to Dr. Scharff!')
+
+});
+
+// set functionality to send sms
 app.get('/sendSMS', function(req, res) {
 
     var ref = db.ref("Questions/Biology/Q1");
@@ -241,16 +225,10 @@ app.get('/sendSMS', function(req, res) {
         var txt = snapshot.val();
         console.log("From firebase: " + txt);
 
-        client.messages.create({
-            to: "+12035502615",
-            from: "+12039894740",
-            body: "Cheat-mode activated for Biology/Q1:\n\n" +
-                txt.Text +
-                "\nCorrect answer: " + txt.B,
-        }, function(err, message) {
-            console.log(message.sid);
-        });
-
+        twilioClient.sendSMS("+12035502615",
+            "Cheat-mode activated for Biology/Q1:\n\n" +
+            txt.Text +
+            "\nCorrect answer: " + txt.B);
     });
 
     // ejs render automatically looks in the views folder
