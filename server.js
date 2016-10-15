@@ -75,7 +75,7 @@ app.post('/receiveSMS', function(req, res) {
 
     if (smsContent == 'restart' || smsContent == 'reset') { // Restarting the service
         twilioClient.sendSMS(number, 'Starting over.');
-        updateCurrentSubject(number, "Nothing");
+        updateCurrentSubject(number, "nothing");
         counter = 0;
     } else if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
@@ -235,9 +235,10 @@ function getSubject(subjectChar){
       case 'c': // Maths
           sub = 'Maths'
           break;
+      case 'nothing':
       default:
           console.error('Something went wrong after selecting a subject. Input: ' + subjectChar);
-          return "Nothing";
+          return "nothing";
   }
 
   return sub;
