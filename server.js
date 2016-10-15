@@ -109,8 +109,14 @@ var serviceName = "QuizMaster";
 // Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
 
+    var REGISTER_CONSTANT = -10;
+
+    var number = req.body.From;
+
     console.log('Received sms: ' + req.body.Body +
-                '\nFrom number: ' + req.body.From);
+        '\nFrom number: ' + number);
+
+    var exists = UserExists(number);
 
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
@@ -124,15 +130,27 @@ app.post('/receiveSMS', function(req, res) {
     if (smsContent == 'restart') { // Restarting the service
         twiml.message('Starting over.');
         counter = 0;
-    } else if (counter == 0) { // First message received by user
+    }
+
+    if (counter == REGISTER_CONSTANT){
+      registerUser(number, smsContent);
+      twiml.message("You are registered, " + smsContent + "!");
+      counter = 0;
+    }
+
+    if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
-            twiml.message('Hi and welcome to ' + serviceName + '!' +
-                '\nPlease select one of the following options using a single character: ' +
-                '\nA. Biology' +
-                '\nB. Physics' +
-                '\nC. Maths' +
-                '\n\nSend \'restart\' at any time to start over.');
-            counter++;
+
+            if (exists){
+              twiml.message(chooseCategory(number));
+              counter = 1;
+            }
+            else {
+                twiml.message("We could not find a user associated with your number! " +
+                    "\nPlease text us your name.");
+                counter = REGISTER_CONSTANT;
+            }
+
         } else {
             twiml.message('You have not started the service. Text \'Start\' to start!');
         }
@@ -170,6 +188,44 @@ app.post('/receiveSMS', function(req, res) {
     res.end(twiml.toString());
 
 });
+
+function registerUser(number, username) {
+
+    var ref = db.ref("Users");
+
+    ref.child(number).set({
+        name: username,
+        category: null
+    });
+
+}
+
+function chooseCategory(number) {
+
+    var welcome = "Welcome back, ";
+    var txt = '!\nPlease select one of the following options using a single character: ' +
+        '\nA. Biology' +
+        '\nB. Physics' +
+        '\nC. Maths' +
+        '\n\nSend \'restart\' at any time to start over.'
+
+    var ref = db.ref("Users/" + number);
+    ref.once("value", function(snapshot) {
+
+        return welcome + snapshot.name + txt;
+    });
+}
+
+function UserExists(number) {
+    var ref = db.ref("Users/" + number);
+    ref.once("value", function(snapshot) {
+        console.log("User found for this number.");
+        return true;
+    }, function(errorObject) {
+        console.log("No user found for this number.");
+        return false;
+    });
+}
 
 function getQuizText(subject, counter) {
     var text;
