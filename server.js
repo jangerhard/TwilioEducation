@@ -47,64 +47,6 @@ app.get('/twiliopart2', function(req, res) {
     res.render('twiliopart2');
 });
 
-// set functionality to send sms
-app.get('/sendSMStoScharff', function(req, res) {
-
-    client.messages.create({
-        to: "+19292168151",
-        from: "+12039894740",
-        body: "Hello from Jan Schoepp",
-    }, function(err, message) {
-        console.log(message.sid);
-    });
-
-    // ejs render automatically looks in the views folder
-    res.send('Message sent to Dr. Scharff!')
-
-});
-
-// testing Firebase
-app.get('/test', function(req, res) {
-
-    var ref = db.ref("Questions/Biology/Q1");
-
-    // Attach an asynchronous callback to read the data at our posts reference
-    ref.on("value", function(snapshot) {
-        var txt = snapshot.val().Text;
-        console.log('Got text: ' + txt);
-        res.send('From firebase: ' + txt);
-    }, function(errorObject) {
-        console.log("The read failed: " + errorObject.code);
-        res.send("The read failed: " + errorObject.code);
-    });
-});
-
-// set functionality to send sms
-app.get('/sendSMS', function(req, res) {
-
-    var ref = db.ref("Questions/Biology/Q1");
-    ref.once("value", function(snapshot) {
-
-        var txt = snapshot.val();
-        console.log("From firebase: " + txt);
-
-        client.messages.create({
-            to: "+12035502615",
-            from: "+12039894740",
-            body: "Cheat-mode activated for Biology/Q1:\n\n" +
-                txt.Text +
-                "\nCorrect answer: " + txt.B,
-        }, function(err, message) {
-            console.log(message.sid);
-        });
-
-    });
-
-    // ejs render automatically looks in the views folder
-    res.send('Message sent to Jan!');
-
-});
-
 var serviceName = "QuizMaster";
 // Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
@@ -122,7 +64,7 @@ app.post('/receiveSMS', function(req, res) {
     var twiml = new twilio.TwimlResponse();
 
     //Check cookies
-    console.log(req.cookies.count);
+    console.log("Cookie: " + req.cookies.count);
     var counter = parseInt(req.cookies.counter) || 0;
 
     var smsContent = req.body.Body.toLowerCase().trim();
@@ -194,8 +136,8 @@ function registerUser(number, username) {
     var ref = db.ref("Users");
 
     ref.child(number).set({
-        name: username,
-        category: null
+        name: username.charAt(0).toUpperCase(),
+        category: "nothing"
     });
 
 }
@@ -219,7 +161,7 @@ function chooseCategory(number) {
 function UserExists(number) {
     var ref = db.ref("Users/" + number);
     ref.once("value", function(snapshot) {
-        console.log("User found for this number.");
+        console.log("User found for this number: " + snapshot.name);
         return true;
     }, function(errorObject) {
         console.log("No user found for this number.");
@@ -259,6 +201,64 @@ function getQuizText(subject, counter) {
         return "You've completed all the tests!";
     });
 }
+
+// set functionality to send sms
+app.get('/sendSMStoScharff', function(req, res) {
+
+    client.messages.create({
+        to: "+19292168151",
+        from: "+12039894740",
+        body: "Hello from Jan Schoepp",
+    }, function(err, message) {
+        console.log(message.sid);
+    });
+
+    // ejs render automatically looks in the views folder
+    res.send('Message sent to Dr. Scharff!')
+
+});
+
+// testing Firebase
+app.get('/test', function(req, res) {
+
+    var ref = db.ref("Questions/Biology/Q1");
+
+    // Attach an asynchronous callback to read the data at our posts reference
+    ref.on("value", function(snapshot) {
+        var txt = snapshot.val().Text;
+        console.log('Got text: ' + txt);
+        res.send('From firebase: ' + txt);
+    }, function(errorObject) {
+        console.log("The read failed: " + errorObject.code);
+        res.send("The read failed: " + errorObject.code);
+    });
+});
+
+// set functionality to send sms
+app.get('/sendSMS', function(req, res) {
+
+    var ref = db.ref("Questions/Biology/Q1");
+    ref.once("value", function(snapshot) {
+
+        var txt = snapshot.val();
+        console.log("From firebase: " + txt);
+
+        client.messages.create({
+            to: "+12035502615",
+            from: "+12039894740",
+            body: "Cheat-mode activated for Biology/Q1:\n\n" +
+                txt.Text +
+                "\nCorrect answer: " + txt.B,
+        }, function(err, message) {
+            console.log(message.sid);
+        });
+
+    });
+
+    // ejs render automatically looks in the views folder
+    res.send('Message sent to Jan!');
+
+});
 
 // Create a route to respond to a call
 app.post('/receiveCall', function(req, res) {
