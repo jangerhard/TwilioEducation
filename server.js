@@ -170,6 +170,9 @@ function UserExists(number) {
 
         console.log("User found for this number: " + u);
         return true;
+    }, function(errorObject) {
+        console.log("No user found for this number.");
+        return false;
     });
 }
 
