@@ -154,8 +154,8 @@ function checkAnswer(number, answer, counter) {
                     "\nText 'restart' to try again!");
 
             console.log("Correct answer: " + s_shot.val().correct +
-                    "\nAnswer from user: " + answer) +
-                "\cCorrect? - " + s_shot.val().correct.toLowerCase === answer;
+                    "\nAnswer from user: " + answer +
+                "\cCorrect? - " + s_shot.val().correct.toLowerCase === answer);
 
             if (s_shot.val().correct.toLowerCase === answer) {
                 incrementTotCorrect(number);
@@ -224,7 +224,7 @@ function sendCompleteStats(number) {
     var userRef = db.ref("Users").child(number);
     userRef.once("value", function(snapshot) {
         var correct = snapshot.val().totCorrect;
-        
+
         if (correct > 0) {
             twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
                 correct + " correct answers!");
@@ -232,6 +232,8 @@ function sendCompleteStats(number) {
           twilioClient.sendSMS(number, "Well done, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
               correct + " correct answers. Better luck next time!");
         }
+
+        resetUser(number);
 
     });
 }
