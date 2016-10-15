@@ -211,6 +211,16 @@ function resetUser(number){
   });
 }
 
+function sendCompleteStats(number){
+    var userRef = db.ref("Users").child(number);
+    userRef.once("value", function(snapshot) {
+
+        twilioClient.sendSMS("Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
+        snapshot.val().totCorrect + "!");
+
+    });
+}
+
 function sendQuizText(number, subjectChar, counter) {
     var text;
     var sub;
@@ -222,6 +232,10 @@ function sendQuizText(number, subjectChar, counter) {
     //Gets Question and answer based on subject and counter
     var ref = db.ref("Questions/" + sub + "/Q" + counter);
     ref.once("value", function(snapshot) {
+
+        if (snapshot.val() == null)
+          sendCompleteStats(number);
+
         text = "\nQ" + counter + ": " +
             "\n" + snapshot.val().Text +
             "\nA: " + snapshot.val().A +
