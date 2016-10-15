@@ -72,15 +72,13 @@ app.post('/receiveSMS', function(req, res) {
 
     var smsContent = req.body.Body.toLowerCase().trim();
 
-    if (counter == REGISTER_CONSTANT) {
-        registerUser(number, req.body.Body);
-        twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!");
-        counter = 0;
-    }
-
     if (smsContent == 'restart') { // Restarting the service
         twilioClient.sendSMS(number, 'Starting over.');
         updateCurrentSubject(number, "Nothing");
+        counter = 0;
+    } else if (counter == REGISTER_CONSTANT) {
+        registerUser(number, req.body.Body);
+        twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!");
         counter = 0;
     } else if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
@@ -182,9 +180,11 @@ function chooseCategory() {
 }
 
 function updateCurrentSubject(number, subject) {
+    var sub = getSubject(subject);
+
     var subjectRef = db.ref("Users").child(number);
     subjectRef.update({
-        "subject": getSubject(subject),
+        "subject": sub,
     });
 }
 
