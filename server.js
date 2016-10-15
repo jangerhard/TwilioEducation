@@ -154,9 +154,9 @@ function checkAnswer(number, answer, counter) {
                     "\nText 'restart' to try again!");
 
             console.log("Correct answer: " + s_shot.val().correct +
-                        "Answer from user: " + answer);
+                        "\nAnswer from user: " + answer);
 
-            if (s_shot.val().correct === answer){
+            if (s_shot.val().correct.toLowerCase === answer){
               incrementTotCorrect(number);
               twilioClient.sendSMS(number, 'That is correct!');
             }
@@ -242,8 +242,10 @@ function sendQuizText(number, subjectChar, counter) {
     var ref = db.ref("Questions/" + sub + "/Q" + counter);
     ref.once("value", function(snapshot) {
 
-        if (snapshot.val() == null)
+        if (snapshot.val() == null || snapshot == null){
           sendCompleteStats(number);
+          return;
+        }
 
         text = "\nQ" + counter + ": " +
             "\n" + snapshot.val().Text +
