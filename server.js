@@ -58,8 +58,6 @@ app.post('/receiveSMS', function(req, res) {
     console.log('Received sms: ' + req.body.Body +
         '\nFrom number: ' + number);
 
-    var exists = UserExists(number);
-
     //Create TwiML response
     var twiml = new twilio.TwimlResponse();
 
@@ -83,7 +81,7 @@ app.post('/receiveSMS', function(req, res) {
     if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
 
-            if (exists){
+            if (UserExists(number)){
               twiml.message(chooseCategory(number));
               counter = 1;
             }
@@ -97,6 +95,8 @@ app.post('/receiveSMS', function(req, res) {
             twiml.message('You have not started the service. Text \'Start\' to start!');
         }
     } else if (counter == 1) { // Selected subject
+
+        console.log("User chose: " + smsContent);
         var subject = smsContent;
         if (subject === 'a' || subject === 'b' || subject === 'c') {
             twiml.message(getQuizText(subject, counter));
