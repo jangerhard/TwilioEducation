@@ -147,6 +147,11 @@ function checkAnswer(number, answer, counter) {
         var questionRef = db.ref("Questions/" + subject + "/Q" + counter);
 
         questionRef.once("value", function(s_shot) {
+
+            if (s_shot == null)
+                twilioClient.sendSMS(number, "You completed the entire quiz!" +
+              "\nText 'restart' to try again!");
+
             if (s_shot.val().correct == answer)
                 twilioClient.sendSMS(number, 'That is correct! Next question: ');
             else
