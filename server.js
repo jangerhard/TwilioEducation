@@ -105,7 +105,7 @@ app.post('/receiveSMS', function(req, res) {
         console.log("User chose: " + smsContent);
         var subject = smsContent;
         if (subject === 'a' || subject === 'b' || subject === 'c') {
-            sendQuizText(number, subject, counter);
+            sendQuizText(number, subject, 1);
             updateCurrentSubject(number, subject);
             counter = 1;
         } else
@@ -202,6 +202,8 @@ function sendQuizText(number, subjectChar, counter) {
     var sub;
 
     sub = getSubject(subjectChar);
+
+    console.log("Sending quiz text for " + sub + "/Q" + counter);
 
     //Gets Question and answer based on subject and counter
     var ref = db.ref("Questions/" + sub + "/Q" + counter);
