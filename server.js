@@ -112,7 +112,7 @@ app.post('/receiveSMS', function(req, res) {
         } else
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
 
-    } else if (counter == 1) { // Answering
+    } else if (counter >= 1) { // Answering
         var answer = smsContent;
 
         // TODO: Fix checking for answers
@@ -153,7 +153,7 @@ function checkAnswer(number, answer, counter) {
                 twilioClient.sendSMS(number, "You completed the entire quiz!" +
                     "\nText 'restart' to try again!");
 
-            if (s_shot.val().correct == answer)
+            if (s_shot.val().correct === answer)
                 twilioClient.sendSMS(number, 'That is correct! Next question: ');
             else
                 twilioClient.sendSMS(number, 'That is wrong.. Next question: ');
