@@ -75,7 +75,7 @@ app.post('/receiveSMS', function(req, res) {
 
     if (smsContent == 'restart' || smsContent == 'reset') { // Restarting the service
         twilioClient.sendSMS(number, 'Starting over.');
-        updateCurrentSubject(number, "nothing");
+        resetUser(number);
         counter = 0;
     } else if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
@@ -124,7 +124,7 @@ app.post('/receiveSMS', function(req, res) {
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
 
     } else {
-        twilioClient.sendSMS(number, 'For now that is all.. Text \'restart\' to start over!');
+        twilioClient.sendSMS(number, 'Something went wrong.. Text \'restart\' to start over!');
     }
 
     res.cookie('counter', counter);
@@ -153,6 +153,9 @@ function checkAnswer(number, answer, counter) {
                 twilioClient.sendSMS(number, "You completed the entire quiz!" +
                     "\nText 'restart' to try again!");
 
+            console.log("Correct answer: " + s_shot.val().correct +
+                        "Answer from user: " + answer);
+
             if (s_shot.val().correct === answer)
                 twilioClient.sendSMS(number, 'That is correct! Next question: ');
             else
@@ -173,7 +176,8 @@ function registerUser(number, username) {
 
     ref.child(number).set({
         name: username,
-        subject: "nothing"
+        subject: "nothing",
+        totCorrect: "0"
     });
 
 }
@@ -196,6 +200,15 @@ function updateCurrentSubject(number, subject) {
     subjectRef.update({
         "subject": sub,
     });
+}
+
+function resetUser(number){
+
+  var subjectRef = db.ref("Users").child(number);
+  subjectRef.update({
+      "subject": "nothing",
+      "totCorrect": "0",
+  });
 }
 
 function sendQuizText(number, subjectChar, counter) {
