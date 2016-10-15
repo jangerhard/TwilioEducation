@@ -84,7 +84,7 @@ app.post('/receiveSMS', function(req, res) {
             var ref = db.ref("Users/" + number);
             ref.once("value", function(snapshot) {
 
-                if (snapshot == null) {
+                if (snapshot.val() == null) {
                     console.log("No user found for this number.");
                     twiml.message("We could not find a user associated with your number! " +
                         "\nPlease text us your name.");
@@ -92,8 +92,11 @@ app.post('/receiveSMS', function(req, res) {
 
                 } else {
 
-                    console.log("User found for this number: " + snapshot.val().name);
-                    twiml.message(chooseCategory(number));
+                    console.log("User found for this number: " + snapshot.val().key +
+                                "\nName: " + snapshot.val().name);
+                    twiml.message("Welcome back, " + snapshot.val().name + "!\n"
+                                  + chooseCategory());
+                    console.log("Message sent");
                     counter = 1;
                 }
             }, function(errorObject) {
@@ -151,20 +154,14 @@ function registerUser(number, username) {
 
 }
 
-function chooseCategory(number) {
+function chooseCategory() {
 
-    var welcome = "Welcome back, ";
     var txt = '!\nPlease select one of the following options using a single character: ' +
         '\nA. Biology' +
         '\nB. Physics' +
         '\nC. Maths' +
         '\n\nSend \'restart\' at any time to start over.'
 
-    var ref = db.ref("Users/" + number);
-    ref.once("value", function(snapshot) {
-
-        return welcome + snapshot.name + txt;
-    });
 }
 
 function getQuizText(subject, counter) {
