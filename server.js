@@ -79,7 +79,8 @@ app.post('/receiveSMS', function(req, res) {
         counter = 0;
     } else if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
-        twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!");
+        twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!" +
+            "\nText 'start' to start the learning adventure!");
         counter = 0;
     } else if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
