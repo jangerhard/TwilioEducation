@@ -28,6 +28,12 @@ firebase.initializeApp({
 // The app only has access to public data as defined in the Security Rules
 var db = firebase.database();
 
+var users = [];
+db.ref("Users").on('child_added', function(snapshot) {
+    users.push(snapshot.key);
+    console.log('Added user: ' + snapshot.key);
+});
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
@@ -47,7 +53,9 @@ app.get('/twiliopart2', function(req, res) {
     res.render('twiliopart2');
 });
 
-var serviceName = "QuizMaster";
+//Create TwiML response
+var twiml = new twilio.TwimlResponse();
+
 // Create a route to receive an SMS
 app.post('/receiveSMS', function(req, res) {
 
@@ -82,27 +90,20 @@ app.post('/receiveSMS', function(req, res) {
     if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
 
-            var ref = db.ref("Users/" + number);
-            ref.once("value", function(snapshot) {
-
-                if (snapshot.val() == null) {
+                if(numbers.indexOf(number) !== -1) {
                     console.log("No user found for this number.");
                     twiml.message('We could not find a user associated with your number!' +
                         '\nPlease text us your name.');
                     counter = REGISTER_CONSTANT;
 
                 } else {
-
                     console.log("User found for this number: " + snapshot.key +
-                                "\nName: " + snapshot.val().name);
-                    twiml.message('Welcome back, ' + snapshot.val().name + '!\n'
-                                  + chooseCategory());
+                        "\nName: " + snapshot.val().name);
+                    twiml.message('Welcome back, ' + snapshot.val().name + '!\n' +
+                        chooseCategory());
                     console.log("Message sent");
                     counter = 1;
                 }
-            }, function(errorObject) {
-                console.log(errorObject);
-            });
 
         } else {
             twiml.message('You have not started the service. Text \'Start\' to start!');
