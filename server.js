@@ -225,7 +225,7 @@ function getSubject(subjectChar){
           sub = 'Maths'
           break;
       default:
-          console.error('Something went wrong after selecting a subject. Input: ' + subject);
+          console.error('Something went wrong after selecting a subject. Input: ' + subjectChar);
           return "Error";
   }
 
