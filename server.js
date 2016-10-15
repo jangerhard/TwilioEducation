@@ -230,7 +230,7 @@ function getSubject(subjectChar) {
         case 'a': // Biology
             sub = 'Biology';
             break;
-        case 'Physics'
+        case 'Physics':
         case 'b': // Physics
             sub = 'Physics'
             break;
