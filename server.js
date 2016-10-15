@@ -154,13 +154,13 @@ function checkAnswer(number, answer, counter) {
                     "\nText 'restart' to try again!");
 
             console.log("Correct answer: " + s_shot.val().correct +
-                        "\nAnswer from user: " + answer);
+                    "\nAnswer from user: " + answer) +
+                "\cCorrect? - " + s_shot.val().correct.toLowerCase === answer;
 
-            if (s_shot.val().correct.toLowerCase === answer){
-              incrementTotCorrect(number);
-              twilioClient.sendSMS(number, 'That is correct!');
-            }
-            else
+            if (s_shot.val().correct.toLowerCase === answer) {
+                incrementTotCorrect(number);
+                twilioClient.sendSMS(number, 'That is correct!');
+            } else
                 twilioClient.sendSMS(number, 'That is wrong..');
 
             sendQuizText(number, subject, counter + 1);
@@ -204,28 +204,34 @@ function updateCurrentSubject(number, subject) {
     });
 }
 
-function incrementTotCorrect(number){
-  var subjectRef = db.ref("Users").child(number).child("totCorrect");
-  subjectRef.transaction(function(currentValue){
-      return (current_value || 0) + 1;
-  });
+function incrementTotCorrect(number) {
+    var subjectRef = db.ref("Users").child(number).child("totCorrect");
+    subjectRef.transaction(function(currentValue) {
+        return (current_value || 0) + 1;
+    });
 }
 
-function resetUser(number){
+function resetUser(number) {
 
-  var subjectRef = db.ref("Users").child(number);
-  subjectRef.update({
-      "subject": "nothing",
-      "totCorrect": "0",
-  });
+    var subjectRef = db.ref("Users").child(number);
+    subjectRef.update({
+        "subject": "nothing",
+        "totCorrect": "0",
+    });
 }
 
-function sendCompleteStats(number){
+function sendCompleteStats(number) {
     var userRef = db.ref("Users").child(number);
     userRef.once("value", function(snapshot) {
-
-        twilioClient.sendSMS("Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
-        snapshot.val().totCorrect + "!");
+        var correct = snapshot.val().totCorrect;
+        
+        if (correct > 0) {
+            twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
+                correct + " correct answers!");
+        } else {
+          twilioClient.sendSMS(number, "Well done, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
+              correct + " correct answers. Better luck next time!");
+        }
 
     });
 }
@@ -242,9 +248,9 @@ function sendQuizText(number, subjectChar, counter) {
     var ref = db.ref("Questions/" + sub + "/Q" + counter);
     ref.once("value", function(snapshot) {
 
-        if (snapshot.val() == null || snapshot == null){
-          sendCompleteStats(number);
-          return;
+        if (snapshot.val() == null || snapshot == null) {
+            sendCompleteStats(number);
+            return;
         }
 
         text = "\nQ" + counter + ": " +
