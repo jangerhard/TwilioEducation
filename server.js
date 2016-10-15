@@ -75,8 +75,8 @@ app.post('/receiveSMS', function(req, res) {
     }
 
     if (counter == REGISTER_CONSTANT){
-      registerUser(number, smsContent);
-      twiml.message("You are registered, " + smsContent + "!");
+      registerUser(number, req.body.Body);
+      twiml.message("You are registered, " + req.body.Body + "!");
       counter = 0;
     }
 
@@ -136,7 +136,7 @@ function registerUser(number, username) {
     var ref = db.ref("Users");
 
     ref.child(number).set({
-        name: username.charAt(0).toUpperCase(),
+        name: username,
         category: "nothing"
     });
 
