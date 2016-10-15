@@ -29,11 +29,11 @@ db.ref("Users").on('child_added', function(snapshot) {
     console.log('Added user: ' + snapshot.key);
 });
 db.ref("Users").on("child_removed", function(snapshot) {
-  var index = users.indexOf(snapshot.key);
-  if (index > -1) {
-    array.splice(index, 1);
-    console.log('Removed user: ' + snapshot.key);
-  }
+    var index = users.indexOf(snapshot.key);
+    if (index > -1) {
+        users.splice(index, 1);
+        console.log('Removed user: ' + snapshot.key);
+    }
 });
 
 // set the view engine to ejs
@@ -88,9 +88,7 @@ app.post('/receiveSMS', function(req, res) {
 
             if (users.indexOf(number) !== -1) { // User exists
                 console.log("User found for this number: " + number);
-                twilioClient.sendSMS(number, 'Welcome back!\n' +
-                    chooseCategory());
-                console.log("Message sent");
+                twilioClient.sendSMS(number, chooseCategory());
                 counter = 1;
 
             } else {
@@ -108,7 +106,7 @@ app.post('/receiveSMS', function(req, res) {
         console.log("User chose: " + smsContent);
         var subject = smsContent;
         if (subject === 'a' || subject === 'b' || subject === 'c') {
-            twilioClient.sendSMS(number, sendQuizText(subject, counter));
+            sendQuizText(number, subject, counter);
             counter++;
         } else
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
@@ -123,7 +121,7 @@ app.post('/receiveSMS', function(req, res) {
                 twilioClient.sendSMS(number, 'Unfortunatelly that is wrong.. Try again!');
             else {
                 twilioClient.sendSMS(number, 'That is correct! Well done!');
-                twilioClient.sendSMS(number, getQuizText(subject, counter));
+                sendQuizText(number, subject, counter);
                 counter++;
             }
         }
@@ -167,13 +165,16 @@ function sendQuizText(number, subject, counter) {
     var sub;
 
     switch (subject) {
-        case 'A': // Biology
+        case 'A':
+        case 'a': // Biology
             sub = 'Biology';
             break;
-        case 'B': // Physics
+        case 'B':
+        case 'b': // Physics
             sub = 'Physics'
             break;
-        case 'C': // Maths
+        case 'C':
+        case 'c': // Maths
             sub = 'Maths'
             break;
         default:
