@@ -72,26 +72,33 @@ app.post('/receiveSMS', function(req, res) {
         counter = 0;
     }
 
-    if (counter == REGISTER_CONSTANT){
-      registerUser(number, req.body.Body);
-      twiml.message("You are registered, " + req.body.Body + "!");
-      counter = 0;
+    if (counter == REGISTER_CONSTANT) {
+        registerUser(number, req.body.Body);
+        twiml.message("You are registered, " + req.body.Body + "!");
+        counter = 0;
     }
 
     if (counter == 0) { // First message received by user
         if (smsContent == 'start') {
 
-            console.log("User exists: " + UserExists(number));
+            var ref = db.ref("Users/" + number);
+            ref.once("value", function(snapshot) {
 
-            if (UserExists(number) == true){
-              twiml.message(chooseCategory(number));
-              counter = 1;
-            }
-            else {
-                twiml.message("We could not find a user associated with your number! " +
-                    "\nPlease text us your name.");
-                counter = REGISTER_CONSTANT;
-            }
+                if (snapshot == null) {
+                    console.log("No user found for this number.");
+                    twiml.message("We could not find a user associated with your number! " +
+                        "\nPlease text us your name.");
+                    counter = REGISTER_CONSTANT;
+
+                } else {
+
+                    console.log("User found for this number: " + snapshot.val().name);
+                    twiml.message(chooseCategory(number));
+                    counter = 1;
+                }
+            }, function(errorObject) {
+                console.log(errorObject);
+            });
 
         } else {
             twiml.message('You have not started the service. Text \'Start\' to start!');
@@ -157,24 +164,6 @@ function chooseCategory(number) {
     ref.once("value", function(snapshot) {
 
         return welcome + snapshot.name + txt;
-    });
-}
-
-function UserExists(number) {
-    var ref = db.ref("Users/" + number);
-    ref.once("value", function(snapshot) {
-        var u = snapshot.val().name;
-
-        if (u == null) {
-          console.log("No user found for this number.");
-          return false;
-        }
-
-        console.log("User found for this number: " + u);
-        return true;
-    }, function(errorObject) {
-        console.log("No user found for this number.");
-        return false;
     });
 }
 
