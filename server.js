@@ -64,6 +64,7 @@ app.post('/receiveSMS', function(req, res) {
     //Check cookies
     console.log("Cookie: " + req.cookies.count);
     var counter = parseInt(req.cookies.counter) || 0;
+    console.log("Counter: " + counter);
 
     var smsContent = req.body.Body.toLowerCase().trim();
 
@@ -86,13 +87,13 @@ app.post('/receiveSMS', function(req, res) {
 
                 if (snapshot.val() == null) {
                     console.log("No user found for this number.");
-                    twiml.message('We could not find a user associated with your number! ' +
+                    twiml.message('We could not find a user associated with your number!' +
                         '\nPlease text us your name.');
                     counter = REGISTER_CONSTANT;
 
                 } else {
 
-                    console.log("User found for this number: " + snapshot.val().key +
+                    console.log("User found for this number: " + snapshot.key +
                                 "\nName: " + snapshot.val().name);
                     twiml.message('Welcome back, ' + snapshot.val().name + '!\n'
                                   + chooseCategory());
@@ -139,6 +140,7 @@ app.post('/receiveSMS', function(req, res) {
     res.writeHead(200, {
         'Content-Type': 'text/xml'
     });
+    console.log("End of interaction.");
     res.end(twiml.toString());
 
 });
