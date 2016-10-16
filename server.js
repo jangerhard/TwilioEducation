@@ -230,15 +230,16 @@ function sendCompleteStats(number, totQuestions) {
         var correct = snapshot.val().totCorrect;
 
         if (correct > 0) {
+            if (correct == totQuestions)
+              twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You got everything right! Try again by resetting.");
+            else
             twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
-                correct + " correct answers out of " + totQuestions + " questions!");
+            correct + " correct answers out of " + totQuestions + " questions! Try again by resetting.");
+
         } else {
           twilioClient.sendSMS(number, "Well done, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
-              correct + " correct answers. Better luck next time!");
+              correct + " correct answers. Better luck next time! Try again by resetting.");
         }
-
-        resetUser(number);
-
     });
 }
 
