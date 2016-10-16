@@ -111,7 +111,7 @@ app.post('/receiveSMS', function(req, res) {
         console.log("User chose: " + smsContent);
         var subject = smsContent;
         if (subject === 'a' || subject === 'b' || subject === 'c') {
-            sendQuizText(number, subject, 1);
+            sendQuizText("", number, subject, 1);
             updateCurrentSubject(number, subject);
             counter = 1;
         } else
