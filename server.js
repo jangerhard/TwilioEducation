@@ -79,7 +79,8 @@ app.post('/receiveSMS', function(req, res) {
 
     if (smsContent == 'restart' || smsContent == 'reset') { // Restarting the service
         twilioClient.sendSMS(number, 'Starting over.');
-        resetUser(number);
+        if (users.indexOf(number) !== -1)
+            resetUser(number);
         counter = 0;
     } else if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
