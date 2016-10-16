@@ -20,20 +20,35 @@ app.use(cookieParser());
 firebase.initializeApp({
     databaseURL: "https://twilio-project-46af1.firebaseio.com"
 });
+
 // The app only has access to public data as defined in the Security Rules
 var db = firebase.database();
 
+// Array containing all users that are registered in Firebase. Will update in realtime as server runs
 var users = [];
 db.ref("Users").on('child_added', function(snapshot) {
     users.push(snapshot.key);
-    console.log('Added user: ' + snapshot.key + " under the name: " + snapshot.val().name);
+    console.log('Added user: ' + snapshot.key + " under the name " + snapshot.val().name);
 
 });
 db.ref("Users").on("child_removed", function(snapshot) {
     var index = users.indexOf(snapshot.key);
     if (index > -1) {
         users.splice(index, 1);
-        console.log('Removed user: ' + snapshot.key);
+        console.log('Removed user: ' + snapshot.key + " with name " + snapshot.val().name);
+    }
+});
+// Array containing all teachers that are registered in Firebase. Will update in realtime as server runs
+var teachers = [];
+db.ref("Teachers").on('child_added', function(snapshot) {
+    teachers.push(snapshot.key);
+    console.log('Added teacher: ' + snapshot.key + " under the name " + snapshot.val().name);
+});
+db.ref("Teachers").on("child_removed", function(snapshot) {
+    var index = teachers.indexOf(snapshot.key);
+    if (index > -1) {
+        teachers.splice(index, 1);
+        console.log('Removed teacher: ' + snapshot.key + " with name " + snapshot.val().name);
     }
 });
 
@@ -60,6 +75,7 @@ app.get('/twiliopart2', function(req, res) {
 app.post('/receiveSMS', function(req, res) {
 
     var REGISTER_CONSTANT = -10;
+    var REGISTER_TEACHER_CONSTANT = -15;
     var SELECTING_SUBJECT_CONSTANT = -20;
 
     var number = req.body.From;
@@ -85,6 +101,25 @@ app.post('/receiveSMS', function(req, res) {
         introText = "Welcome to Quizmaster, " + req.body.Body + "!\n\n";
         counter = 0; // Starts the service again
         smsContent = "start"; // Starts the service again
+    } else if (smsContent == 'regTeacher') {
+        if (teachers.indexOf(number) !== -1) // Teacher already registered
+            twilioClient.sendSMS(number, "You are already a registered teacher!");
+        else {
+            twilioClient.sendSMS(number, "Please register as a teacher by giving us your name: ");
+            counter = REGISTER_TEACHER_CONSTANT;
+        }
+    } else if (counter == REGISTER_TEACHER_CONSTANT) {
+        registerTeacher(number, smsContent);
+        twilioClient.sendSMS(number, "You will now be notified whenever someone completes a test.");
+        counter = 0;
+        smsContent = "";
+    } else if (smsContent == 'delTeacher') {
+        if (teachers.indexOf(number) !== -1){ // Teacher registered
+            unregisterTeacher(number);
+            twilioClient.sendSMS(number, "You are no longer registered as a teacher!");
+        } else {
+            //twilioClient.sendSMS(number, "You are not a registered teacher.");
+        }
     }
 
     if (counter == 0) { // Start of the service!
@@ -103,6 +138,8 @@ app.post('/receiveSMS', function(req, res) {
                 counter = REGISTER_CONSTANT;
             }
 
+        } else if (smsContent == "") { // If user registered as teacher
+            return;
         } else {
             twilioClient.sendSMS(number, 'You have not started the service. Text \'Start\' to start!');
         }
@@ -121,7 +158,6 @@ app.post('/receiveSMS', function(req, res) {
         var answer = smsContent;
 
         // TODO: Let user know here that the quiz is done
-
         if (answer === 'a' || answer === 'b' || answer === 'c') {
             checkAnswer(number, answer, counter);
             counter++;
@@ -129,7 +165,7 @@ app.post('/receiveSMS', function(req, res) {
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
 
     } else {
-        twilioClient.sendSMS(number, 'Something went wrong.. Text \'restart\' to start over!');
+        twilioClient.sendSMS(number, 'Something went wrong.. Text \'Restart\' to start over!');
     }
 
     res.cookie('counter', counter);
@@ -187,7 +223,20 @@ function registerUser(number, username) {
         subject: "nothing",
         totCorrect: 0
     });
+}
+function registerTeacher(number, username) {
 
+    var ref = db.ref("Teachers");
+
+    ref.child(number).set({
+        name: username
+    });
+}
+function unregisterTeacher(number) {
+
+    var ref = db.ref("Teachers");
+
+    ref.child(number).remove();
 }
 
 function chooseCategory() {
@@ -246,7 +295,7 @@ function sendCompleteStats(number, totQuestions) {
             txt = "Well done, " + snapshot.val().name + "!" +
                 "You completed the entire quiz, but did not get a single question right.. Better luck next time!";
         }
-
+        notifyTeachers(snapshot.val().name, correct + "/" + totQuestions, snapshot.val().subject);
         twilioClient.sendSMS(number, txt + " Try again by texting 'restart'.");
     });
 }
@@ -282,6 +331,12 @@ function sendQuizText(intro, number, subjectChar, counter) {
     }, function(errorObject) {
         twilioClient.sendSMS(number, "You've completed all the tests!");
     });
+}
+
+function notifyTeachers(nameOfStudent, score, subject){
+    for (var teacher in Teachers)
+      twilioClient.sendSMS(teacher, "Student " + nameOfStudent + " just got " +
+      score + " in " + subject);
 }
 
 function getSubject(subjectChar) {
