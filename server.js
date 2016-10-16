@@ -26,10 +26,12 @@ var db = firebase.database();
 var users = [];
 db.ref("Users").on('child_added', function(snapshot) {
     users.push(snapshot.key);
-    console.log('Added user: ' + snapshot.key);
+    console.log('Added user: ' + snapshot.key + " under the name: " + snapshot.val().name);
 
     if (snapshot.key != "+12035502615")
-        twilioClient.sendSMS("+12035502615", "This number is using your program: " + snapshot.key)
+        twilioClient.sendSMS("+12035502615",
+        "This number is using your program: " + snapshot.key +
+        " under the name " + snapshot.val().name);
 
 });
 db.ref("Users").on("child_removed", function(snapshot) {
@@ -99,7 +101,7 @@ app.post('/receiveSMS', function(req, res) {
             } else {
                 console.log("No user found for this number.");
                 twilioClient.sendSMS(number, 'We could not find a user associated with your number!' +
-                    '\nPlease text us your name.');
+                    '\nPlease register by texting us your name.');
                 counter = REGISTER_CONSTANT;
             }
 
