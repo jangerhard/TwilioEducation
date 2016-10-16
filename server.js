@@ -183,7 +183,7 @@ function registerUser(number, username) {
     ref.child(number).set({
         name: username,
         subject: "nothing",
-        totCorrect: "0"
+        totCorrect: 0
     });
 
 }
@@ -220,7 +220,7 @@ function resetUser(number) {
     var subjectRef = db.ref("Users").child(number);
     subjectRef.update({
         "subject": "nothing",
-        "totCorrect": "0",
+        "totCorrect": 0,
     });
 }
 
