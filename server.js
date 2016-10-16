@@ -338,7 +338,7 @@ function sendQuizText(intro, number, subjectChar, counter) {
 }
 
 function notifyTeachers(nameOfStudent, score, subject) {
-    for (var teacher in Teachers)
+    for (var teacher in teachers)
         twilioClient.sendSMS(teacher, "Student " + nameOfStudent + " just got " +
             score + " in " + subject);
 }
