@@ -79,10 +79,12 @@ app.post('/receiveSMS', function(req, res) {
         if (users.indexOf(number) !== -1)
             resetUser(number);
         counter = 0;
+        smsContent = "start";
     } else if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
         twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!");
         counter = 0;
+        smsContent = "start";
     }
 
     if (counter == 0) { // Start of the service!
