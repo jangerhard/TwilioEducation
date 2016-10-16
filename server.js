@@ -101,7 +101,7 @@ app.post('/receiveSMS', function(req, res) {
         introText = "Welcome to Quizmaster, " + req.body.Body + "!\n\n";
         counter = 0; // Starts the service again
         smsContent = "start"; // Starts the service again
-    } else if (smsContent == 'regTeacher') {
+    } else if (smsContent == 'regteacher') {
         console.log("Trying to register as teacher: " + number);
         if (teachers.indexOf(number) !== -1) // Teacher already registered
             twilioClient.sendSMS(number, "You are already a registered teacher!");
@@ -114,7 +114,7 @@ app.post('/receiveSMS', function(req, res) {
         twilioClient.sendSMS(number, "You will now be notified whenever someone completes a test.");
         counter = 0;
         smsContent = "";
-    } else if (smsContent == 'delTeacher') {
+    } else if (smsContent == 'delteacher') {
         if (teachers.indexOf(number) !== -1){ // Teacher registered
             unregisterTeacher(number);
             twilioClient.sendSMS(number, "You are no longer registered as a teacher!");
