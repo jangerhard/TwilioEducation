@@ -109,6 +109,8 @@ app.post('/receiveSMS', function(req, res) {
             twilioClient.sendSMS(number, "Please register as a teacher by giving us your name: ");
             counter = REGISTER_TEACHER_CONSTANT;
         }
+        counter = 0;
+        smsContent = "";
     } else if (counter == REGISTER_TEACHER_CONSTANT) { // User has requested to be registered as a teacher
         registerTeacher(number, req.body.Body);
         twilioClient.sendSMS(number, "You will now be notified whenever someone completes a test.");
@@ -142,7 +144,7 @@ app.post('/receiveSMS', function(req, res) {
             }
 
         } else if (smsContent == "") { // If user registered as teacher
-            return;
+            continue;
         } else {
             twilioClient.sendSMS(number, 'You have not started the service. Text \'Start\' to start!');
         }
