@@ -153,7 +153,7 @@ function checkAnswer(number, answer, counter) {
 
             var correctAnswer = s_shot.val().correct;
 
-            console.log("Correct answer: " + correctAnswer +
+            console.log("Correct answer: " + correctAnswer.toLowerCase +
                     "\nAnswer from user: " + answer +
                 "\nCorrect? - " + (correctAnswer.toLowerCase === answer));
 
