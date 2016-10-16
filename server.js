@@ -162,11 +162,10 @@ function checkAnswer(number, answer, counter) {
 
             if (correctAnswer === answer) {
                 incrementTotCorrect(number);
-                twilioClient.sendSMS(number, 'That is correct!');
+                sendQuizText("That is correct!\n", number, subject, counter + 1);
             } else
-                twilioClient.sendSMS(number, 'That is wrong..');
+                sendQuizText("That is wrong..\n", number, subject, counter + 1);
 
-            sendQuizText(number, subject, counter + 1);
         }, function(errorObject) {
             console.error(errorObject);
         });
@@ -242,7 +241,7 @@ function sendCompleteStats(number, totQuestions) {
     });
 }
 
-function sendQuizText(number, subjectChar, counter) {
+function sendQuizText(intro, number, subjectChar, counter) {
     var text;
     var sub;
 
@@ -261,7 +260,8 @@ function sendQuizText(number, subjectChar, counter) {
 
         console.log("Sending text for " + sub + "/Q" + counter);
 
-        text = "\nQ" + counter + ": " +
+        text = intro +
+            "\nQ" + counter + ": " +
             "\n" + snapshot.val().Text +
             "\nA: " + snapshot.val().A +
             "\nB: " + snapshot.val().B +
