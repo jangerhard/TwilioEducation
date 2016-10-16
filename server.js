@@ -144,7 +144,7 @@ app.post('/receiveSMS', function(req, res) {
             }
 
         } else if (smsContent == "") { // If user registered as teacher
-            continue;
+            //Do nothing here
         } else {
             twilioClient.sendSMS(number, 'You have not started the service. Text \'Start\' to start!');
         }
