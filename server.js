@@ -211,7 +211,7 @@ function updateCurrentSubject(number, subject) {
 function incrementTotCorrect(number) {
     var subjectRef = db.ref("Users").child(number).child("totCorrect");
     subjectRef.transaction(function(currentValue) {
-        return (current_value || 0) + 1;
+        return (totCorrect || 0) + 1;
     });
 }
 
