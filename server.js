@@ -338,8 +338,8 @@ function sendQuizText(intro, number, subjectChar, counter) {
 }
 
 function notifyTeachers(nameOfStudent, score, subject) {
-    for (var teacher in teachers)
-        twilioClient.sendSMS(teacher, "Student " + nameOfStudent + " just got " +
+    for (var i in teachers)
+        twilioClient.sendSMS(teachers[i], "Student " + nameOfStudent + " just got " +
             score + " in " + subject);
 }
 
@@ -370,6 +370,13 @@ function getSubject(subjectChar) {
 
 }
 
+app.get('/teachers', function(req, res){
+
+  notifyTeachers("Jan", "testing", "Service");
+
+  res.send("Test");
+
+});
 
 // testing Firebase
 app.get('/test', function(req, res) {
