@@ -78,13 +78,11 @@ app.post('/receiveSMS', function(req, res) {
 
     if (smsContent == 'restart' || smsContent == 'reset') { // Restarting the service
         introText = 'Starting over.\n\n';
-        if (users.indexOf(number) !== -1)
-            resetUser(number);
         counter = 0;
         smsContent = "start";
     } else if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
-        introText = "You are registered, " + req.body.Body + "!\n\n";
+        introText = "Welcome to Quizmaster, " + req.body.Body + "!\n\n";
         counter = 0;
         smsContent = "start";
     }
@@ -94,13 +92,13 @@ app.post('/receiveSMS', function(req, res) {
 
             if (users.indexOf(number) !== -1) { // User exists
                 console.log("User found for this number: " + number);
+                resetUser(number); // Catches any leftover scores
                 twilioClient.sendSMS(number, introText + chooseCategory());
-                updateCurrentSubject(number, "nothing");
                 counter = SELECTING_SUBJECT_CONSTANT;
 
             } else {
                 console.log("No user found for this number.");
-                twilioClient.sendSMS(number, 'We could not find a user associated with your number!' +
+                twilioClient.sendSMS(number, 'First time using the service?' +
                     '\nPlease register by texting us your name.');
                 counter = REGISTER_CONSTANT;
             }
@@ -230,18 +228,24 @@ function sendCompleteStats(number, totQuestions) {
     var userRef = db.ref("Users").child(number);
     userRef.once("value", function(snapshot) {
         var correct = snapshot.val().totCorrect;
+        var txt;
 
         if (correct > 0) {
+
             if (correct == totQuestions)
-                twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You got everything right! Try again by texting 'restart'.");
+                txt = "Congratulations, " + snapshot.val().name + "! You got every single question right!";
+            else if (correct > totQuestions)
+                txt = "Hm, you have more correct answers than questions.. " + correct + "/" + totQuestions + "! No one likes a cheater..";
             else
-                twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
-                    correct + " correct answers out of " + totQuestions + " questions! Try again by texting 'restart'.");
+                txt = "Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You got " +
+                correct + "/" + totQuestions + "! Well done!";
 
         } else {
-            twilioClient.sendSMS(number, "Well done, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
-                correct + " correct answers. Better luck next time! Try again by texting 'restart'.");
+            txt = "Well done, " + snapshot.val().name + "!" +
+                "You completed the entire quiz, but did not get a single question right.. Better luck next time!";
         }
+
+        twilioClient.sendSMS(number, txt + " Try again by texting 'restart'.");
     });
 }
 
