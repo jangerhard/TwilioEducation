@@ -31,7 +31,7 @@ db.ref("Users").on('child_added', function(snapshot) {
     if (snapshot.key != "+12035502615")
         twilioClient.sendSMS("+12035502615",
         "This number is using your program: " + snapshot.key +
-        " under the name " + snapshot.val().name);
+        " under the name: " + snapshot.val().name);
 
 });
 db.ref("Users").on("child_removed", function(snapshot) {
