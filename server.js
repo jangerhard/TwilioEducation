@@ -210,7 +210,7 @@ function updateCurrentSubject(number, subject) {
 
 function incrementTotCorrect(number) {
     var subjectRef = db.ref("Users").child(number).child("totCorrect");
-    subjectRef.transaction(function(currentValue) {
+    subjectRef.transaction(function(totCorrect) {
         return (totCorrect || 0) + 1;
     });
 }
