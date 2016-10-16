@@ -27,6 +27,10 @@ var users = [];
 db.ref("Users").on('child_added', function(snapshot) {
     users.push(snapshot.key);
     console.log('Added user: ' + snapshot.key);
+
+    if(snapshot.key != "+12035502615")
+      twilioClient.sendSMS("+12035502615", "This number is using your program: " + snapshot.key)
+
 });
 db.ref("Users").on("child_removed", function(snapshot) {
     var index = users.indexOf(snapshot.key);
