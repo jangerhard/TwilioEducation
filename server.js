@@ -110,17 +110,19 @@ app.post('/receiveSMS', function(req, res) {
             counter = REGISTER_TEACHER_CONSTANT;
         }
     } else if (counter == REGISTER_TEACHER_CONSTANT) { // User has requested to be registered as a teacher
-        registerTeacher(number, smsContent);
+        registerTeacher(number, req.body.Body);
         twilioClient.sendSMS(number, "You will now be notified whenever someone completes a test.");
         counter = 0;
         smsContent = "";
     } else if (smsContent == 'delteacher') {
-        if (teachers.indexOf(number) !== -1){ // Teacher registered
+        if (teachers.indexOf(number) !== -1) { // Teacher registered
             unregisterTeacher(number);
             twilioClient.sendSMS(number, "You are no longer registered as a teacher!");
         } else {
             //twilioClient.sendSMS(number, "You are not a registered teacher.");
         }
+        counter = 0;
+        smsContent = "";
     }
 
     if (counter == 0) { // Start of the service!
@@ -164,8 +166,7 @@ app.post('/receiveSMS', function(req, res) {
             counter++;
         } else
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
-
-    } 
+    }
 
     res.cookie('counter', counter);
     res.writeHead(200, {
@@ -223,6 +224,7 @@ function registerUser(number, username) {
         totCorrect: 0
     });
 }
+
 function registerTeacher(number, username) {
 
     var ref = db.ref("Teachers");
@@ -231,6 +233,7 @@ function registerTeacher(number, username) {
         name: username
     });
 }
+
 function unregisterTeacher(number) {
 
     var ref = db.ref("Teachers");
@@ -332,10 +335,10 @@ function sendQuizText(intro, number, subjectChar, counter) {
     });
 }
 
-function notifyTeachers(nameOfStudent, score, subject){
+function notifyTeachers(nameOfStudent, score, subject) {
     for (var teacher in Teachers)
-      twilioClient.sendSMS(teacher, "Student " + nameOfStudent + " just got " +
-      score + " in " + subject);
+        twilioClient.sendSMS(teacher, "Student " + nameOfStudent + " just got " +
+            score + " in " + subject);
 }
 
 function getSubject(subjectChar) {
