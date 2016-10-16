@@ -165,9 +165,7 @@ app.post('/receiveSMS', function(req, res) {
         } else
             twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
 
-    } else {
-        twilioClient.sendSMS(number, 'Something went wrong.. Text \'Restart\' to start over!');
-    }
+    } 
 
     res.cookie('counter', counter);
     res.writeHead(200, {
