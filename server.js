@@ -78,13 +78,13 @@ app.post('/receiveSMS', function(req, res) {
 
     if (smsContent == 'restart' || smsContent == 'reset') { // Restarting the service
         introText = 'Starting over.\n\n';
-        counter = 0;
-        smsContent = "start";
-    } else if (counter == REGISTER_CONSTANT) {
+        counter = 0; // Starts the service again
+        smsContent = "start"; // Starts the service again
+    } else if (counter == REGISTER_CONSTANT) { // Registering the user with whatever the user has inputed
         registerUser(number, req.body.Body);
         introText = "Welcome to Quizmaster, " + req.body.Body + "!\n\n";
-        counter = 0;
-        smsContent = "start";
+        counter = 0; // Starts the service again
+        smsContent = "start"; // Starts the service again
     }
 
     if (counter == 0) { // Start of the service!
@@ -115,10 +115,12 @@ app.post('/receiveSMS', function(req, res) {
             updateCurrentSubject(number, subject);
             counter = 1;
         } else
-            twilioClient.sendSMS(number, 'You have to input \'A\', \'B\', or \'C\'!');
+            twilioClient.sendSMS(number, 'You are selecting a subject! \nYou have to input \'A\', \'B\', or \'C\'!');
 
     } else if (counter >= 1) { // Answering
         var answer = smsContent;
+
+        // TODO: Let user know here that the quiz is done
 
         if (answer === 'a' || answer === 'b' || answer === 'c') {
             checkAnswer(number, answer, counter);
