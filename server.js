@@ -151,11 +151,13 @@ function checkAnswer(number, answer, counter) {
                 twilioClient.sendSMS(number, "You completed the entire quiz!" +
                     "\nText 'restart' to try again!");
 
-            console.log("Correct answer: " + s_shot.val().correct +
-                    "\nAnswer from user: " + answer +
-                "\cCorrect? - " + (s_shot.val().correct.toLowerCase === ''+answer));
+            var correctAnswer = s_shot.val().correct;
 
-            if (s_shot.val().correct.toLowerCase === ''+answer) {
+            console.log("Correct answer: " + correctAnswer +
+                    "\nAnswer from user: " + answer +
+                "\nCorrect? - " + (correctAnswer.toLowerCase === answer));
+
+            if (correctAnswer.toLowerCase === answer) {
                 incrementTotCorrect(number);
                 twilioClient.sendSMS(number, 'That is correct!');
             } else
