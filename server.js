@@ -28,11 +28,6 @@ db.ref("Users").on('child_added', function(snapshot) {
     users.push(snapshot.key);
     console.log('Added user: ' + snapshot.key + " under the name: " + snapshot.val().name);
 
-    if (snapshot.key != "+12035502615")
-        twilioClient.sendSMS("+12035502615",
-        "This number is using your program: " + snapshot.key +
-        " under the name: " + snapshot.val().name);
-
 });
 db.ref("Users").on("child_removed", function(snapshot) {
     var index = users.indexOf(snapshot.key);
@@ -86,10 +81,11 @@ app.post('/receiveSMS', function(req, res) {
         counter = 0;
     } else if (counter == REGISTER_CONSTANT) {
         registerUser(number, req.body.Body);
-        twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!" +
-            "\nText 'start' to start the learning adventure!");
+        twilioClient.sendSMS(number, "You are registered, " + req.body.Body + "!");
         counter = 0;
-    } else if (counter == 0) { // First message received by user
+    }
+
+    if (counter == 0) { // Start of the service!
         if (smsContent == 'start') {
 
             if (users.indexOf(number) !== -1) { // User exists
