@@ -115,9 +115,7 @@ app.post('/receiveSMS', function(req, res) {
     } else if (counter >= 1) { // Answering
         var answer = smsContent;
 
-        // TODO: Fix checking for answers
         if (answer === 'a' || answer === 'b' || answer === 'c') {
-
             checkAnswer(number, answer, counter);
             counter++;
         } else
@@ -155,7 +153,7 @@ function checkAnswer(number, answer, counter) {
 
             console.log("Correct answer: " + s_shot.val().correct +
                     "\nAnswer from user: " + answer +
-                "\cCorrect? - " + s_shot.val().correct.toLowerCase === answer);
+                "\cCorrect? - " + (s_shot.val().correct.toLowerCase === ''+answer));
 
             if (s_shot.val().correct.toLowerCase === ''+answer) {
                 incrementTotCorrect(number);
