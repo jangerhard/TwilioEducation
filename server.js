@@ -224,14 +224,14 @@ function resetUser(number) {
     });
 }
 
-function sendCompleteStats(number) {
+function sendCompleteStats(number, totQuestions) {
     var userRef = db.ref("Users").child(number);
     userRef.once("value", function(snapshot) {
         var correct = snapshot.val().totCorrect;
 
         if (correct > 0) {
             twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
-                correct + " correct answers!");
+                correct + " correct answers out of " + totQuestions + " questions!");
         } else {
           twilioClient.sendSMS(number, "Well done, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
               correct + " correct answers. Better luck next time!");
@@ -255,7 +255,7 @@ function sendQuizText(number, subjectChar, counter) {
     ref.once("value", function(snapshot) {
 
         if (snapshot.val() == null || snapshot == null) {
-            sendCompleteStats(number);
+            sendCompleteStats(number, counter-1);
             return;
         }
 
