@@ -153,8 +153,8 @@ function checkAnswer(number, answer, counter) {
         questionRef.once("value", function(s_shot) {
 
             if (s_shot.val() == null || s_shot == null) {
-                twilioClient.sendSMS(number, "You completed the entire quiz!" +
-                    "\nText 'restart' to try again!");
+                twilioClient.sendSMS(number, "You completed all the question for " + subject +
+                    "!\nText 'restart' to try again!");
                 return;
             }
 
@@ -231,14 +231,14 @@ function sendCompleteStats(number, totQuestions) {
 
         if (correct > 0) {
             if (correct == totQuestions)
-                twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You got everything right! Try again by resetting.");
+                twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You got everything right! Try again by texting 'restart'.");
             else
                 twilioClient.sendSMS(number, "Congratulations, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
-                    correct + " correct answers out of " + totQuestions + " questions! Try again by resetting.");
+                    correct + " correct answers out of " + totQuestions + " questions! Try again by texting 'restart'.");
 
         } else {
             twilioClient.sendSMS(number, "Well done, " + snapshot.val().name + "! You completed the entire quiz. You had a total of " +
-                correct + " correct answers. Better luck next time! Try again by resetting.");
+                correct + " correct answers. Better luck next time! Try again by texting 'restart'.");
         }
     });
 }
