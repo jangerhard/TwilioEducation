@@ -93,7 +93,7 @@ app.post('/receiveSMS', function(req, res) {
     var introText = "";
 
     if (smsContent.length >= 25){
-        twilioClient.sendSMS("Try to limit yourself to 25 chars");
+        twilioClient.sendSMS(number, "Try to limit yourself to 25 chars");
         return;
     }
 
