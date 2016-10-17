@@ -92,6 +92,11 @@ app.post('/receiveSMS', function(req, res) {
 
     var introText = "";
 
+    if (smsContent.length >= 25){
+        twilioClient.sendSMS("Try to limit yourself to 25 chars");
+        return;
+    }
+
     if (smsContent == 'restart' || smsContent == 'reset') { // Restarting the service
         introText = 'Starting over.\n\n';
         counter = 0; // Starts the service again
