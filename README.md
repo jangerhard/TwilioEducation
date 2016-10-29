@@ -10,3 +10,6 @@ Implements the quiz-service 'Quizmaster', using Twilio for handling incoming/out
 To use this service, text **'Start'** to +1 203 989 4740.   
 For more information, visit:  
 http://jangerhard-node.herokuapp.com/twiliopart2
+
+UPDATE - October 29th, 2016:   
+There are no more funds on the phonenumber, so the service is not currently running.
