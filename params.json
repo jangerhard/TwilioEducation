@@ -1,0 +1,6 @@
+{
+  "name": "Twilioeducation",
+  "tagline": "A project for CS643 at Pace University using Node.js, Heroku, Twilio, and Firebase",
+  "body": "# Quizmaster - A project for CS643 at Pace University using Node.js, Heroku, Twilio, and Firebase. \r\n\r\nTesting node.js deployed to Heroku at:  \r\nhttp://jangerhard-node.herokuapp.com/\r\n\r\nTutorial used:  \r\nhttps://scotch.io/tutorials/how-to-deploy-a-node-js-app-to-heroku\r\n\r\nImplements the quiz-service 'Quizmaster', using Twilio for handling incoming/outcoming SMS, and now utilizes Firebase to store user information and all questions+answers.   \r\nTo use this service, text **'Start'** to +1 203 989 4740.   \r\nFor more information, visit:  \r\nhttp://jangerhard-node.herokuapp.com/twiliopart2\r\n\r\nUPDATE - October 29th, 2016:   \r\nThere are no more funds on the phonenumber, so the service is not currently running.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
