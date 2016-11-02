@@ -1,5 +1,6 @@
 UPDATE - October 29th, 2016:   
 There are no more funds on the phonenumber, so the service is not currently running.
+
 =========================
 
 Testing node.js deployed to Heroku at:  
