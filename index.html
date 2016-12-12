@@ -1,34 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
     <title>Twilioeducation by jangerhard</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
   </head>
-
   <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/jangerhard/TwilioEducation">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/jangerhard/TwilioEducation/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/jangerhard/TwilioEducation/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-    <header>
-      <div class="container">
-        <h1>Twilioeducation</h1>
-        <h2>A project for CS643 at Pace University using Node.js, Heroku, Twilio, and Firebase</h2>
+    <div class="wrapper">
 
-        <section id="downloads">
-          <a href="https://github.com/jangerhard/TwilioEducation/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/jangerhard/TwilioEducation/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/jangerhard/TwilioEducation" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+      <section>
+        <div id="title">
+          <h1>Twilioeducation</h1>
+          <p>A project for CS643 at Pace University using Node.js, Heroku, Twilio, and Firebase</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/jangerhard">jangerhard</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
 
-    <div class="container">
-      <section id="main_content">
-        <p>UPDATE - October 29th, 2016:<br>
+        <p>UPDATE - December 12th, 2016:<br>
+Funds are back! The service can now be used! </p>
+
+<p>UPDATE - October 29th, 2016:<br>
 There are no more funds on the phonenumber, so the service is not currently running.</p>
 
 <h1></h1>
@@ -44,8 +57,9 @@ To use this service, text <strong>'Start'</strong> to +1 203 989 4740.<br>
 For more information, visit:<br>
 <a href="http://jangerhard-node.herokuapp.com/twiliopart2">http://jangerhard-node.herokuapp.com/twiliopart2</a></p>
       </section>
-    </div>
 
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
   </body>
 </html>
