@@ -1,3 +1,6 @@
+UPDATE - December 12th, 2016:   
+Funds are back! The service can now be used! 
+
 UPDATE - October 29th, 2016:   
 There are no more funds on the phonenumber, so the service is not currently running.
 
